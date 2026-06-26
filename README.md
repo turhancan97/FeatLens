@@ -21,7 +21,7 @@ Most "DINO PCA" scripts are welded to one model. FeatLens separates **representa
 (a small adapter layer over the model zoo) from **visualization** (robust PCA → RGB), so you can
 point it at a new model in seconds and compare models/layers side by side.
 
-## Gallery
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Gallery
 
 All produced by `examples/quickstart.py` on the three bundled images. Sizes below are the
 **originals**; each image is resized to `img_size` (default 224) before the model.
@@ -46,7 +46,7 @@ All produced by `examples/quickstart.py` on the three bundled images. Sizes belo
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" height="320">
 </p>
 
-## Install
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Install
 
 ```bash
 pip install -e ".[timm]"          # timm backend (DINO, CLIP, SigLIP, DeiT, ...)
@@ -55,7 +55,7 @@ pip install -e ".[timm]"          # timm backend (DINO, CLIP, SigLIP, DeiT, ...)
 
 Install PyTorch for your platform first (https://pytorch.org).
 
-## Quick start (Python)
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Quick start (Python)
 
 ```python
 import featlens as ll
@@ -70,7 +70,7 @@ ll.compare(["dino_vitb16", "mae_vitb16", "clip_large_openai"], "img.jpg", layer=
 ll.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overlay=True, out="grid.png")
 ```
 
-## Quick start (CLI)
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Quick start (CLI)
 
 ```bash
 featlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \
@@ -78,7 +78,7 @@ featlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \
 featlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
 ```
 
-## Image size & resizing
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Image size & resizing
 
 Images are resized to a square **`img_size` × `img_size`** before the model (default **224**).
 `img_size` must be divisible by the model's patch size (multiples of 16 for patch-16 models,
@@ -107,7 +107,7 @@ featlens --models dino_vitb16 --images wide.jpg --resize-mode pad --img-size 448
 (`FeatureGrid(interpolation_size=…)` is separate — it only upscales the rendered tiles, not the
 model input.)
 
-## Model sources
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Model sources
 
 | Source | How to pass it | Needs |
 |--------|----------------|-------|
@@ -120,13 +120,13 @@ model input.)
 Friendly names (see `featlens/registry.py`) cover DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT,
 Perception Encoder and V-JEPA; any other timm id works directly.
 
-## Layers
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Layers
 
 `layers=[2, 5, 8, 11]` selects **transformer block indices** (0-based, **negatives allowed**,
 `-1` = last). The same convention holds across backends — for HuggingFace models FeatLens maps
 block `i` to `hidden_states[i+1]` (skipping the embedding output) for you.
 
-## Bring your own model
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Bring your own model
 
 Anything that isn't built in works through the escape hatch — give a feature function or a hook
 target. CNNs work for free (their conv map is already spatial):
@@ -145,7 +145,7 @@ FeatureGrid([FeatureExtractor(lm)]).render("img.jpg", out_path="resnet50.png")
 For a model in its own repo, `external_adapter.load(repo_dir, builder, hook_target="blocks")`
 puts the repo on `sys.path`, builds the model, and hooks its blocks.
 
-## How it works
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> How it works
 
 1. **Adapters** resolve a spec → a `LoadedModel` and drive extraction in one of three modes:
    forward **hooks** on per-block modules (ViTs/CNNs/V-JEPA), HF **`output_hidden_states`**, or a
@@ -158,7 +158,7 @@ puts the repo on `sys.path`, builds the model, and hooks its blocks.
 The extraction core adapts the `FrozenBackbone` pattern; the PCA is adapted from the SpaRRTa
 feature-map script.
 
-## Releasing
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Releasing
 
 Releases publish to [PyPI](https://pypi.org/project/featlens/) automatically via
 `.github/workflows/publish.yml` (PyPI **Trusted Publishing** — no API token stored in the repo).
@@ -176,6 +176,6 @@ git tag v0.1.0 && git push origin v0.1.0
 
 The workflow builds the sdist + wheel, runs `twine check`, and uploads to PyPI.
 
-## License
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> License
 
 [MIT](LICENSE).
