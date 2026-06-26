@@ -1,0 +1,16 @@
+# Core dependencies for LayerLens.
+# Install PyTorch for your CUDA version first (see https://pytorch.org).
+torch>=1.13
+torchvision>=0.14
+numpy>=1.21
+pillow>=9.0
+imageio>=2.20
+einops>=0.6
+matplotlib>=3.5
+pyyaml>=5.4
+
+# Model backends are optional — install what you need:
+#   pip install "layerlens[timm]"   # timm models (DINO, CLIP, SigLIP, DeiT, ...)
+#   pip install "layerlens[hf]"     # HuggingFace transformers
+#   pip install "layerlens[clip]"   # open_clip
+#   pip install "layerlens[all]"

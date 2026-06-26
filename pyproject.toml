@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "layerlens"
+version = "0.1.0"
+description = "Model-agnostic feature-map visualization: PCA-to-RGB feature maps from any vision model and any layer."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Turhan Can Kargın" }]
+keywords = ["feature-maps", "visualization", "pca", "vision-transformer", "interpretability", "dino", "clip", "vjepa"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "torch>=1.13",
+    "torchvision>=0.14",
+    "numpy>=1.21",
+    "pillow>=9.0",
+    "imageio>=2.20",
+    "einops>=0.6",
+    "matplotlib>=3.5",
+    "pyyaml>=5.4",
+]
+
+[project.optional-dependencies]
+timm = ["timm>=0.9"]
+hf = ["transformers>=4.30"]
+clip = ["open_clip_torch>=2.20"]
+all = ["timm>=0.9", "transformers>=4.30", "open_clip_torch>=2.20"]
+
+[project.scripts]
+layerlens = "layerlens.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/turhancan97/LayerLens"
+
+[tool.setuptools.packages.find]
+include = ["layerlens*"]

@@ -1,0 +1,14 @@
+# Example LayerLens config for the CLI:
+#   layerlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
+# CLI flags override these values.
+
+models:
+  - dino_vitb16        # DINO ViT-B/16 (timm)
+  - dinov2_vitb14      # DINOv2 ViT-B/14 (timm)
+  - clip_large_openai  # CLIP ViT-L/14 (timm)
+  # - "hf:facebook/dinov2-base"          # HuggingFace transformers
+  # - vjepa2_vitl16                       # V-JEPA 2 (torch.hub)
+
+layers: [2, 5, 8, 11]
+img_size: 224
+basis: per_tile         # or shared_per_model
