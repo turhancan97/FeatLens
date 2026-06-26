@@ -16,6 +16,8 @@ import torch
 import torch.nn.functional as F
 from einops import rearrange
 
+from . import methods
+from .cache import FeatureCache, make_key
 from .extractor import FeatureExtractor
 from .pca import fit_pca_stats, get_pca_map
 
@@ -35,9 +37,17 @@ class FeatureGrid:
         remove_first_component: bool = False,
         interpolation_size: int = 224,
         resize_mode: str = "squash",
+        method: str = "pca",
+        seed: Optional[Sequence[float]] = None,
+        k: int = 6,
+        colormap: str = "turbo",
+        cache: bool = False,
+        cache_dir: Optional[str] = None,
     ):
         if basis not in ("per_tile", "shared_per_model"):
             raise ValueError("basis must be 'per_tile' or 'shared_per_model'.")
+        if method not in methods.METHODS:
+            raise ValueError(f"method must be one of {methods.METHODS}.")
         self.layers = list(layers) if layers is not None else [-1]
         self.img_size = img_size
         self.pretrained = pretrained
@@ -47,6 +57,12 @@ class FeatureGrid:
         self.outlier_threshold = outlier_threshold
         self.remove_first_component = remove_first_component
         self.interp = interpolation_size
+        self.method = method
+        self.seed = tuple(seed) if seed is not None else (0.5, 0.5)
+        self.k = k
+        self.colormap = colormap
+        self._cache = FeatureCache(cache_dir) if cache else None
+        self.n_extractions = 0  # model forward passes actually run (for cache tests)
         self._models = [self._make_entry(m) for m in models]
 
     def _make_entry(self, m: ModelSpec) -> Tuple[str, FeatureExtractor]:
@@ -75,11 +91,35 @@ class FeatureGrid:
         return name
 
     # ---- core ------------------------------------------------------------
-    def _features_for_model(self, ex: FeatureExtractor, pils) -> torch.Tensor:
+    def _extract(self, ex: FeatureExtractor, pils) -> torch.Tensor:
         tensor = torch.stack([ex.transform(p) for p in pils], dim=0).to(self.device)
-        ex.model.to(self.device)
         out = ex(tensor)  # [B, L, D, h, w]
         return out.float().cpu()
+
+    def _features_for_model(self, ex: FeatureExtractor, pils, img_bytes=None) -> torch.Tensor:
+        ex.model.to(self.device)
+        if self._cache is None or img_bytes is None:
+            self.n_extractions += len(pils)
+            return self._extract(ex, pils)
+
+        # Cached path: resolve per image, batch only the misses through one forward.
+        results: List[Optional[torch.Tensor]] = [None] * len(pils)
+        keys = [make_key(b, ex.name, self.img_size, self.resize_mode, ex.layers,
+                         self.pretrained) for b in img_bytes]
+        misses = []
+        for i, key in enumerate(keys):
+            cached = self._cache.get(key)
+            if cached is not None:
+                results[i] = cached
+            else:
+                misses.append(i)
+        if misses:
+            self.n_extractions += len(misses)
+            out = self._extract(ex, [pils[i] for i in misses])  # [M, L, D, h, w]
+            for j, i in enumerate(misses):
+                results[i] = out[j]
+                self._cache.put(keys[i], out[j])
+        return torch.stack(results, dim=0)  # [B, L, D, h, w]
 
     def _layer_map(self, feats: torch.Tensor, li: int) -> torch.Tensor:
         """feats: [B, L, D, h, w] -> tall feature map [(B h'), w', D] after interpolation."""
@@ -88,6 +128,42 @@ class FeatureGrid:
             fmap = F.interpolate(fmap, size=(self.interp, self.interp), mode="bilinear",
                                  align_corners=False)
         return rearrange(fmap, "n d h w -> (n h) w d")
+
+    def _method_tile(self, feats: torch.Tensor, li: int) -> np.ndarray:
+        """Colorize layer ``li`` per image on the native patch grid, then interpolate the RGB.
+
+        Used for the non-PCA methods (cosine / k-means / foreground): clustering and similarity
+        are computed per patch, so we color the small ``[h, w, D]`` grid and upscale the result.
+        """
+        fmap = feats[:, li]  # [B, D, h, w]
+        rgbs = []
+        for b in range(fmap.shape[0]):
+            single = rearrange(fmap[b], "d h w -> h w d")  # [h, w, D] native grid
+            rgb = methods.colorize(single, self.method, seed=self.seed, k=self.k,
+                                   colormap=self.colormap,
+                                   outlier_threshold=self.outlier_threshold)
+            rgbs.append(self._interp_rgb(rgb))
+        return np.concatenate(rgbs, axis=0)  # vertical stack, matching the PCA layout
+
+    def _interp_rgb(self, rgb: np.ndarray) -> np.ndarray:
+        if not self.interp:
+            return rgb
+        # Nearest keeps cluster/mask boundaries crisp; cosine heatmaps read better smoothed.
+        nearest = self.method in ("kmeans", "foreground")
+        t = torch.from_numpy(np.ascontiguousarray(rgb)).permute(2, 0, 1).unsqueeze(0).float()
+        if nearest:
+            t = F.interpolate(t, size=(self.interp, self.interp), mode="nearest")
+        else:
+            t = F.interpolate(t, size=(self.interp, self.interp), mode="bilinear",
+                              align_corners=False)
+        return t[0].permute(1, 2, 0).numpy()
+
+    @staticmethod
+    def _read_bytes(p) -> bytes:
+        try:
+            return Path(p).read_bytes()
+        except (TypeError, OSError):
+            return str(p).encode()  # not a real path -> degrade to a stable string key
 
     def render(
         self,
@@ -102,24 +178,28 @@ class FeatureGrid:
         if isinstance(images, (str, Path)):
             images = [images]
         pils = [Image.open(p).convert("RGB") for p in images]
+        img_bytes = [self._read_bytes(p) for p in images] if self._cache is not None else None
 
         n_rows = len(self._models)
         n_cols = len(self.layers)
         tiles: List[List[np.ndarray]] = [[None] * n_cols for _ in range(n_rows)]
 
         for r, (label, ex) in enumerate(self._models):
-            feats = self._features_for_model(ex, pils)  # [B, L, D, h, w]
+            feats = self._features_for_model(ex, pils, img_bytes)  # [B, L, D, h, w]
             shared = None
-            if self.basis == "shared_per_model":
+            if self.method == "pca" and self.basis == "shared_per_model":
                 allfeat = rearrange(feats, "n l d h w -> (n l h w) d")
                 shared = fit_pca_stats(allfeat, self.outlier_threshold,
                                        self.remove_first_component)
             src = self._overlay_source(ex, pils) if overlay else None
             for c in range(n_cols):
-                fmap = self._layer_map(feats, c)  # [(B h'), w', D]
-                rgb = get_pca_map(fmap, pca_stats=shared,
-                                  outlier_threshold=self.outlier_threshold,
-                                  remove_first_component=self.remove_first_component)
+                if self.method == "pca":
+                    fmap = self._layer_map(feats, c)  # [(B h'), w', D]
+                    rgb = get_pca_map(fmap, pca_stats=shared,
+                                      outlier_threshold=self.outlier_threshold,
+                                      remove_first_component=self.remove_first_component)
+                else:
+                    rgb = self._method_tile(feats, c)  # native colorize + interpolate, B-stacked
                 if overlay and src is not None:
                     rgb = (1 - overlay_alpha) * src + overlay_alpha * rgb
                 tiles[r][c] = np.clip(rgb, 0, 1)

@@ -9,6 +9,9 @@ Quick start::
     ll.grid(["dino_vitb16", "clip_large_openai"], "img.jpg", layers=[2, 5, 8, 11], out="grid.png")
     ll.visualize("dinov2_vitb14", "img.jpg", layers=[2, 5, 8, 11], out="row.png")   # scrub layers
     ll.compare(["dino_vitb16", "mae_vitb16"], "img.jpg", layer=-1, out="cmp.png")    # compare models
+
+v0.2 adds non-PCA views (``method="cosine"|"kmeans"|"foreground"``), an opt-in feature
+``cache=True``, and :func:`correspond` for cross-image patch matching.
 """
 
 from typing import Optional, Sequence, Union
@@ -16,9 +19,10 @@ from pathlib import Path
 
 from .extractor import FeatureExtractor
 from .grid import FeatureGrid
+from .correspond import correspond
 
-__version__ = "0.1.0"
-__all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare"]
+__version__ = "0.2.0"
+__all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond"]
 
 
 _RENDER_KEYS = ("overlay", "overlay_alpha", "figscale")

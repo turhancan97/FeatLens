@@ -22,10 +22,20 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--models", nargs="+", help="Model specs (friendly name, timm id, or backend:ident).")
     p.add_argument("--layers", nargs="+", type=int, help="Block indices (negatives allowed).")
     p.add_argument("--images", nargs="+", required=True, help="One or more image paths.")
-    p.add_argument("--mode", choices=["grid", "visualize", "compare"], default="grid",
+    p.add_argument("--mode", choices=["grid", "visualize", "compare", "correspond"], default="grid",
                    help="grid = models x layers; visualize = one model, shared basis; "
-                        "compare = many models, one layer.")
-    p.add_argument("--layer", type=int, default=-1, help="Single layer for --mode compare.")
+                        "compare = many models, one layer; correspond = seed-patch matching "
+                        "between --images[0] and --image-b.")
+    p.add_argument("--layer", type=int, default=-1, help="Single layer for --mode compare/correspond.")
+    p.add_argument("--method", choices=["pca", "cosine", "kmeans", "foreground"], default="pca",
+                   help="Visualization method (default: pca).")
+    p.add_argument("--seed", nargs=2, type=float, metavar=("X", "Y"), default=None,
+                   help="Seed patch as normalized image coords in [0,1] for cosine/correspond.")
+    p.add_argument("--k", type=int, default=6, help="Number of clusters for --method kmeans.")
+    p.add_argument("--colormap", default="turbo", help="Matplotlib colormap for cosine heatmaps.")
+    p.add_argument("--cache", action="store_true", help="Cache extracted features on disk.")
+    p.add_argument("--image-b", default=None, help="Second image for --mode correspond.")
+    p.add_argument("--topk", type=int, default=1, help="Top matches to mark for --mode correspond.")
     p.add_argument("--out", default="featlens_out.png", help="Output PNG path.")
     p.add_argument("--img-size", type=int, default=224, help="Model input size (must be divisible by patch size).")
     p.add_argument("--resize-mode", choices=["squash", "crop", "pad"], default=None,
@@ -62,10 +72,24 @@ def main(argv: List[str] = None) -> None:
 
     import featlens as ll
 
-    common = dict(img_size=img_size, pretrained=pretrained, device=args.device)
-    resize_mode = args.resize_mode or cfg.get("resize_mode")
-    if resize_mode:
-        common["resize_mode"] = resize_mode
+    resize_mode = args.resize_mode or cfg.get("resize_mode") or "squash"
+
+    if args.mode == "correspond":
+        if not args.image_b:
+            raise SystemExit("--mode correspond needs --image-b.")
+        out = ll.correspond(
+            models[0], args.images[0], args.image_b, layer=args.layer,
+            seed=tuple(args.seed) if args.seed else (0.5, 0.5), topk=args.topk,
+            img_size=img_size, resize_mode=resize_mode, pretrained=pretrained,
+            device=args.device, colormap=args.colormap, out=args.out)
+        print(f"Saved: {Path(out).resolve()}")
+        return
+
+    common = dict(img_size=img_size, pretrained=pretrained, device=args.device,
+                  resize_mode=resize_mode, method=args.method, k=args.k,
+                  colormap=args.colormap, cache=args.cache)
+    if args.seed:
+        common["seed"] = tuple(args.seed)
     if basis:
         common["basis"] = basis
     render_kw = dict(overlay=args.overlay, overlay_alpha=args.overlay_alpha)
