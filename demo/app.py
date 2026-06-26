@@ -17,6 +17,7 @@ to a Gradio Space. The first render of a model downloads its weights.
 
 from __future__ import annotations
 
+import os
 import tempfile
 
 import gradio as gr
@@ -25,8 +26,14 @@ import featlens as ll
 from featlens.registry import BACKBONE_REGISTRY
 
 MODELS = list(BACKBONE_REGISTRY.keys())
-DEFAULT_MODEL = "dino_vitb16" if "dino_vitb16" in MODELS else MODELS[0]
+# Default to a small ViT-S backbone so the very first render is a quick download.
+_PREFERRED = ["dinov2_vits14", "dino_vits16", "dinov3_vits16"]
+DEFAULT_MODEL = next((m for m in _PREFERRED if m in MODELS), MODELS[0])
 METHODS = ["pca", "cosine", "kmeans", "foreground"]
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+EXAMPLE_IMAGES = [os.path.join(HERE, "examples", "images", n)
+                  for n in ("cat.jpg", "coffee.jpg", "astronaut.jpg")]
 
 
 def _tmp_png() -> str:
@@ -34,14 +41,17 @@ def _tmp_png() -> str:
 
 
 def render_view(image, model, layer, method, k, seed_x, seed_y):
-    if image is None:
+    if not image:
         return None
     out = _tmp_png()
-    ll.visualize(
-        model, image, layers=[int(layer)], out=out,
-        method=method, k=int(k), seed=(seed_x, seed_y),
-        img_size=224, cache=True, device=None,
-    )
+    try:
+        ll.visualize(
+            model, image, layers=[int(layer)], out=out,
+            method=method, k=int(k), seed=(seed_x, seed_y),
+            img_size=224, cache=True, device=None,
+        )
+    except Exception as e:  # e.g. layer index out of range for a 12-block ViT-S/B
+        raise gr.Error(f"{type(e).__name__}: {e}")
     return out
 
 
@@ -55,21 +65,30 @@ def on_click(image, evt: gr.SelectData):
 
 
 def render_correspond(image_a, image_b, model, layer, seed_x, seed_y, topk):
-    if image_a is None or image_b is None:
+    if not image_a or not image_b:
         return None
     out = _tmp_png()
-    ll.correspond(
-        model, image_a, image_b, layer=int(layer),
-        seed=(seed_x, seed_y), topk=int(topk), img_size=224, out=out,
-    )
+    try:
+        ll.correspond(
+            model, image_a, image_b, layer=int(layer),
+            seed=(seed_x, seed_y), topk=int(topk), img_size=224, out=out,
+        )
+    except Exception as e:
+        raise gr.Error(f"{type(e).__name__}: {e}")
     return out
 
 
 with gr.Blocks(title="FeatLens") as demo:
     gr.Markdown(
         "# 🔎 FeatLens — see what any vision model encodes\n"
-        "PCA / cosine-similarity / k-means / foreground feature maps from any layer. "
-        "In **cosine** mode, click the image to move the seed patch."
+        "Render **feature maps** from any layer of any vision model, colored by **PCA**, "
+        "**cosine-similarity** to a seed patch, **k-means** segmentation, or a **foreground** "
+        "mask. In **cosine** mode, click the image to move the seed patch.\n\n"
+        "[GitHub](https://github.com/turhancan97/FeatLens) · "
+        "[PyPI](https://pypi.org/project/featlens/) · "
+        "[Docs](https://turhancan97.github.io/FeatLens/)\n\n"
+        "*The first render of a model downloads its weights (a few seconds for the default "
+        "ViT-S); repeat renders on the same image are cached.*"
     )
 
     with gr.Tab("Feature views"):
@@ -85,6 +104,8 @@ with gr.Blocks(title="FeatLens") as demo:
                     seed_y = gr.Number(0.5, label="seed y")
                 go = gr.Button("Render", variant="primary")
             out = gr.Image(label="Feature map")
+
+        gr.Examples(examples=[[p] for p in EXAMPLE_IMAGES], inputs=img, label="Example images")
 
         # A filepath Image needs a numpy copy to read click coords; load it for the select event.
         img_np = gr.Image(visible=False, type="numpy")
@@ -109,6 +130,8 @@ with gr.Blocks(title="FeatLens") as demo:
         cgo = gr.Button("Match", variant="primary")
         cout = gr.Image(label="Correspondence")
         cgo.click(render_correspond, [a, b, cmodel, clayer, csx, csy, ctopk], cout)
+        gr.Examples(examples=[[EXAMPLE_IMAGES[0], EXAMPLE_IMAGES[1]]], inputs=[a, b],
+                    label="Example pair")
 
 
 if __name__ == "__main__":
