@@ -49,15 +49,28 @@ class FeatureGrid:
 
     def _make_entry(self, m: ModelSpec) -> Tuple[str, FeatureExtractor]:
         if isinstance(m, FeatureExtractor):
-            return m.name, m
+            return self._short_label(m.name), m
         if isinstance(m, tuple):
             label, spec = m
             ex = FeatureExtractor(spec, layers=self.layers, img_size=self.img_size,
                                   pretrained=self.pretrained)
-            return label, ex
+            return self._short_label(label), ex
+        # Use the original (usually short) spec as the row label, not the resolved timm id.
         ex = FeatureExtractor(m, layers=self.layers, img_size=self.img_size,
                               pretrained=self.pretrained)
-        return ex.name, ex
+        return self._short_label(m), ex
+
+    @staticmethod
+    def _short_label(name: str, maxlen: int = 22) -> str:
+        name = str(name)
+        if ":" in name:            # drop a backend prefix like "hf:"
+            name = name.split(":", 1)[1]
+        if "/" in name:            # keep the last path segment (HF ids, paths)
+            name = name.split("/")[-1]
+        name = name.split(".")[0]  # drop a timm pretrain tag (".dino", ".openai", ...)
+        if len(name) > maxlen:
+            name = name[: maxlen - 1] + "…"
+        return name
 
     # ---- core ------------------------------------------------------------
     def _features_for_model(self, ex: FeatureExtractor, pils) -> torch.Tensor:
