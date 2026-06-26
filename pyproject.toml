@@ -32,12 +32,14 @@ timm = ["timm>=0.9"]
 hf = ["transformers>=4.30"]
 clip = ["open_clip_torch>=2.20"]
 all = ["timm>=0.9", "transformers>=4.30", "open_clip_torch>=2.20"]
+docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.24"]
 
 [project.scripts]
 featlens = "featlens.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/turhancan97/FeatLens"
+Documentation = "https://turhancan97.github.io/FeatLens/"
 
 [tool.setuptools.packages.find]
 include = ["featlens*"]

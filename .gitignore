@@ -17,6 +17,9 @@ out/
 outputs/
 *.log
 
+# MkDocs build output
+site/
+
 # Caches / weights
 .cache/
 *.pth
