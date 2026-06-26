@@ -1,0 +1,2 @@
+featlens[timm,hf]>=0.2.0
+gradio>=4.0

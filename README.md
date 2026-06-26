@@ -11,18 +11,20 @@
 
 📖 **Documentation:** https://turhancan97.github.io/FeatLens/
 
-**See what any vision model encodes.** FeatLens renders PCA-to-RGB **feature maps** for
+**See what any vision model encodes.** FeatLens renders **feature maps** for
 **any** vision model — DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, V-JEPA, CNNs, … — loaded from
 **any** source (timm, HuggingFace `transformers`, `torch.hub`, an external repo, or a model you
-built yourself), and from **any layer**, as a clean **model × layer** grid.
+built yourself), and from **any layer**, as a clean **model × layer** grid. Color the features by
+robust **PCA**, **cosine-similarity** to a seed patch, **k-means** segmentation, or a **foreground**
+mask — and match patches **across two images**.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" alt="DINO feature maps across layers" width="100%">
 </p>
 
 Most "DINO PCA" scripts are welded to one model. FeatLens separates **representation access**
-(a small adapter layer over the model zoo) from **visualization** (robust PCA → RGB), so you can
-point it at a new model in seconds and compare models/layers side by side.
+(a small adapter layer over the model zoo) from **visualization** (PCA / cosine / k-means /
+foreground), so you can point it at a new model in seconds and compare models/layers side by side.
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Gallery
 
@@ -48,6 +50,19 @@ All produced by `examples/quickstart.py` on the three bundled images. Sizes belo
   &nbsp;&nbsp;
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" height="320">
 </p>
+
+**Beyond PCA** — the same DINOv2 row, recolored by **cosine-similarity** to a seed patch,
+**k-means** segmentation, and a **foreground** mask (across layers 2 / 5 / 8 / 11):
+
+| Method | Across layers |
+|---|---|
+| `cosine` (seed on the cat) | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_cosine.png" width="520"> |
+| `kmeans` (k=6) | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_kmeans.png" width="520"> |
+| `foreground` | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_foreground.png" width="520"> |
+
+**`correspond(...)` — seed a patch in image A, find the matches in image B:**
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/correspond.png" alt="cross-image correspondence" height="300"></p>
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Install
 
@@ -128,6 +143,29 @@ Perception Encoder and V-JEPA; any other timm id works directly.
 `layers=[2, 5, 8, 11]` selects **transformer block indices** (0-based, **negatives allowed**,
 `-1` = last). The same convention holds across backends — for HuggingFace models FeatLens maps
 block `i` to `hidden_states[i+1]` (skipping the embedding output) for you.
+
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Visualization methods
+
+Every method consumes the same dense feature stack, so it works on `grid` / `visualize` /
+`compare` and across any layer:
+
+| `method` | shows | extra args |
+|----------|-------|------------|
+| `pca` (default) | robust PCA → RGB | `basis`, `remove_first_component` |
+| `cosine` | cosine similarity to a **seed** patch | `seed=(x, y)`, `colormap` |
+| `kmeans` | unsupervised k-means segmentation | `k` |
+| `foreground` | fg/bg mask (first PCA component) | — |
+
+```python
+fl.visualize("dino_vitb16", "img.jpg", layers=[2, 5, 8, 11], method="cosine", seed=(0.5, 0.5))
+fl.compare(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layer=-1, method="kmeans", k=8)
+fl.correspond("dino_vitb16", "a.jpg", "b.jpg", seed=(0.4, 0.5), topk=3, out="corr.png")  # cross-image
+```
+
+`seed` is **normalized** image coords `(x, y) ∈ [0, 1]` (resolution/model independent). Pass
+`cache=True` to memoize extraction on disk (`$FEATLENS_CACHE_DIR`, else `~/.cache/featlens`) so
+re-renders are instant. An interactive **Gradio demo** lives in [`demo/`](demo/) — in `cosine` mode,
+click the image to move the seed. See the [docs](https://turhancan97.github.io/FeatLens/methods/).
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Bring your own model
 

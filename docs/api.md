@@ -11,6 +11,8 @@ thin wrappers over `FeatureGrid`; `FeatureExtractor` is the per-model engine.
 
 ::: featlens.grid
 
+::: featlens.correspond
+
 ## FeatureGrid
 
 ::: featlens.FeatureGrid

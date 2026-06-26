@@ -18,6 +18,13 @@ fl.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overl
 The three entry points are thin wrappers over [`FeatureGrid`](api.md): `visualize` is one row
 (shared basis), `compare` is one column (per-tile basis), and `grid` is the full matrix.
 
+Beyond the default PCA→RGB, pass `method="cosine" | "kmeans" | "foreground"` for other views, and
+`cache=True` to memoize extraction — see [Visualization methods](methods.md).
+
+```python
+fl.visualize("dino_vitb16", "img.jpg", layers=[2, 5, 8, 11], method="cosine", seed=(0.5, 0.5))
+```
+
 ## CLI
 
 ```bash
