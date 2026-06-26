@@ -1,15 +1,15 @@
-# LayerLens
+# FeatLens
 
-**See what any vision model encodes.** LayerLens renders PCA-to-RGB **feature maps** for
+**See what any vision model encodes.** FeatLens renders PCA-to-RGB **feature maps** for
 **any** vision model — DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, V-JEPA, CNNs, … — loaded from
 **any** source (timm, HuggingFace `transformers`, `torch.hub`, an external repo, or a model you
 built yourself), and from **any layer**, as a clean **model × layer** grid.
 
 <p align="center">
-  <img src="examples/feat_cat.png" alt="DINO feature maps across layers" width="100%">
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" alt="DINO feature maps across layers" width="100%">
 </p>
 
-Most "DINO PCA" scripts are welded to one model. LayerLens separates **representation access**
+Most "DINO PCA" scripts are welded to one model. FeatLens separates **representation access**
 (a small adapter layer over the model zoo) from **visualization** (robust PCA → RGB), so you can
 point it at a new model in seconds and compare models/layers side by side.
 
@@ -22,20 +22,20 @@ All produced by `examples/quickstart.py` on the three bundled images. Sizes belo
 
 | Image (original size) | Source | Feature maps |
 |---|---|---|
-| `astronaut.jpg` · 512×512 | <img src="examples/images/astronaut.jpg" width="110"> | <img src="examples/feat_astronaut.png" width="430"> |
-| `cat.jpg` · 451×300 | <img src="examples/images/cat.jpg" width="110"> | <img src="examples/feat_cat.png" width="430"> |
-| `coffee.jpg` · 600×400 | <img src="examples/images/coffee.jpg" width="110"> | <img src="examples/feat_coffee.png" width="430"> |
+| `astronaut.jpg` · 512×512 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/astronaut.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_astronaut.png" width="430"> |
+| `cat.jpg` · 451×300 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/cat.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" width="430"> |
+| `coffee.jpg` · 600×400 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/coffee.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_coffee.png" width="430"> |
 
 **`grid(...)` — model × layer, overlaid on the image** (DINO vs DINOv2 across layers 2/5/8/11):
 
-<p align="center"><img src="examples/grid_overlay.png" alt="model x layer grid overlay" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/grid_overlay.png" alt="model x layer grid overlay" width="100%"></p>
 
 **`compare(...)` — models at the final layer** &nbsp;|&nbsp; **`custom_adapter` — a ResNet-50 (CNN escape hatch)**
 
 <p align="center">
-  <img src="examples/compare_models.png" alt="compare models at last layer" height="320">
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models at last layer" height="320">
   &nbsp;&nbsp;
-  <img src="examples/resnet50.png" alt="resnet50 feature map" height="320">
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" height="320">
 </p>
 
 ## Install
@@ -50,7 +50,7 @@ Install PyTorch for your platform first (https://pytorch.org).
 ## Quick start (Python)
 
 ```python
-import layerlens as ll
+import featlens as ll
 
 # One model, scrub layers (shared PCA basis -> colors comparable across the row)
 ll.visualize("dinov2_vitb14", "img.jpg", layers=[2, 5, 8, 11], out="row.png")
@@ -65,9 +65,9 @@ ll.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overl
 ## Quick start (CLI)
 
 ```bash
-layerlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \
+featlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \
     --images examples/images/cat.jpg --mode grid --out out/grid.png
-layerlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
+featlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
 ```
 
 ## Image size & resizing
@@ -93,7 +93,7 @@ ll.grid([...], "wide.jpg", resize_mode="crop")          # Python
 ```
 
 ```bash
-layerlens --models dino_vitb16 --images wide.jpg --resize-mode pad --img-size 448 --out g.png
+featlens --models dino_vitb16 --images wide.jpg --resize-mode pad --img-size 448 --out g.png
 ```
 
 (`FeatureGrid(interpolation_size=…)` is separate — it only upscales the rendered tiles, not the
@@ -109,13 +109,13 @@ model input.)
 | **External repo** (VGGT/SPA/…) | `external_adapter.load(repo_dir, builder, hook_target=…)` | the cloned repo |
 | **Your own model** | `custom_adapter.load(model, feature_fn=…)` | — |
 
-Friendly names (see `layerlens/registry.py`) cover DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT,
+Friendly names (see `featlens/registry.py`) cover DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT,
 Perception Encoder and V-JEPA; any other timm id works directly.
 
 ## Layers
 
 `layers=[2, 5, 8, 11]` selects **transformer block indices** (0-based, **negatives allowed**,
-`-1` = last). The same convention holds across backends — for HuggingFace models LayerLens maps
+`-1` = last). The same convention holds across backends — for HuggingFace models FeatLens maps
 block `i` to `hidden_states[i+1]` (skipping the embedding output) for you.
 
 ## Bring your own model
@@ -125,8 +125,8 @@ target. CNNs work for free (their conv map is already spatial):
 
 ```python
 import torch.nn as nn, torchvision
-from layerlens import FeatureExtractor, FeatureGrid
-from layerlens.adapters import custom_adapter
+from featlens import FeatureExtractor, FeatureGrid
+from featlens.adapters import custom_adapter
 
 resnet = torchvision.models.resnet50(weights="DEFAULT")
 trunk = nn.Sequential(*list(resnet.children())[:-2])           # -> [B, 2048, h, w]

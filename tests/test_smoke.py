@@ -2,9 +2,9 @@
 
 import torch
 
-from layerlens import FeatureExtractor, FeatureGrid
-from layerlens.adapters import custom_adapter
-from layerlens.tokens import tokens_to_grid
+from featlens import FeatureExtractor, FeatureGrid
+from featlens.adapters import custom_adapter
+from featlens.tokens import tokens_to_grid
 
 
 def test_tokens_to_grid_strips_prefix():
@@ -39,7 +39,7 @@ def test_custom_escape_hatch_callable():
 
 def test_resize_modes_yield_square():
     from PIL import Image
-    from layerlens.preprocess import build_transform
+    from featlens.preprocess import build_transform
 
     img = Image.new("RGB", (640, 360))  # non-square
     for mode in ("squash", "crop", "pad"):

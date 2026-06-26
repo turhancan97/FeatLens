@@ -1,5 +1,5 @@
-# Example LayerLens config for the CLI:
-#   layerlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
+# Example FeatLens config for the CLI:
+#   featlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
 # CLI flags override these values.
 
 models:

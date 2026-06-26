@@ -1,10 +1,10 @@
-"""LayerLens command-line interface (argparse + optional YAML).
+"""FeatLens command-line interface (argparse + optional YAML).
 
 Examples::
 
-    layerlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \\
+    featlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \\
         --images img.jpg --mode grid --overlay --out out/grid.png
-    layerlens --config configs/example.yaml --images img.jpg --out out/grid.png
+    featlens --config configs/example.yaml --images img.jpg --out out/grid.png
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from typing import List
 
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="layerlens",
+        prog="featlens",
         description="Render PCA feature-map grids from any vision model and any layer.",
     )
     p.add_argument("--models", nargs="+", help="Model specs (friendly name, timm id, or backend:ident).")
@@ -26,7 +26,7 @@ def _build_parser() -> argparse.ArgumentParser:
                    help="grid = models x layers; visualize = one model, shared basis; "
                         "compare = many models, one layer.")
     p.add_argument("--layer", type=int, default=-1, help="Single layer for --mode compare.")
-    p.add_argument("--out", default="layerlens_out.png", help="Output PNG path.")
+    p.add_argument("--out", default="featlens_out.png", help="Output PNG path.")
     p.add_argument("--img-size", type=int, default=224, help="Model input size (must be divisible by patch size).")
     p.add_argument("--resize-mode", choices=["squash", "crop", "pad"], default=None,
                    help="squash=force square (may distort); crop=resize shortest side + center-crop; "
@@ -60,7 +60,7 @@ def main(argv: List[str] = None) -> None:
     basis = args.basis or cfg.get("basis")
     pretrained = not args.no_pretrained
 
-    import layerlens as ll
+    import featlens as ll
 
     common = dict(img_size=img_size, pretrained=pretrained, device=args.device)
     resize_mode = args.resize_mode or cfg.get("resize_mode")

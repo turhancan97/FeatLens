@@ -6,7 +6,7 @@ any custom model via a ``hook_target`` or ``feature_fn``.
 
 Example::
 
-    from layerlens.adapters import external_adapter
+    from featlens.adapters import external_adapter
     lm = external_adapter.load(
         repo_dir=os.environ["VGGT_REPO"],
         builder=lambda: build_my_vggt(),

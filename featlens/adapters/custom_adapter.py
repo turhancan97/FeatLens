@@ -6,7 +6,7 @@ Two ways to use it:
    ``(model, block_idx) -> module`` or the name of a ``ModuleList`` attribute (e.g. ``"blocks"``)
    whose elements are hooked.
 2. **feature_fn** — pass ``feature_fn(model, images) -> [B, N, D]`` (or ``[B, D, h, w]``) and
-   LayerLens skips hooks entirely. Best for exotic models / single-layer extraction.
+   FeatLens skips hooks entirely. Best for exotic models / single-layer extraction.
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """Image preprocessing: per-model normalization and transforms.
 
-Unlike a training pipeline that fixes one normalization, LayerLens builds the transform
+Unlike a training pipeline that fixes one normalization, FeatLens builds the transform
 *per model* using the model's own expected mean/std (timm reports these exactly), so
 SigLIP / CLIP / ImageNet checkpoints are all fed correctly without any runtime remap.
 """

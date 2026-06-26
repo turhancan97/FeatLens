@@ -37,7 +37,7 @@ class FeatureExtractor(nn.Module):
         else:
             raise TypeError(
                 "Pass a model spec string or a LoadedModel. For a raw nn.Module use "
-                "layerlens.adapters.custom_adapter.load(...) / external_adapter.load(...)."
+                "featlens.adapters.custom_adapter.load(...) / external_adapter.load(...)."
             )
 
         self.model = self.lm.model

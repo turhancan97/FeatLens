@@ -1,4 +1,4 @@
-# Core dependencies for LayerLens.
+# Core dependencies for FeatLens.
 # Install PyTorch for your CUDA version first (see https://pytorch.org).
 torch>=1.13
 torchvision>=0.14
@@ -10,7 +10,7 @@ matplotlib>=3.5
 pyyaml>=5.4
 
 # Model backends are optional — install what you need:
-#   pip install "layerlens[timm]"   # timm models (DINO, CLIP, SigLIP, DeiT, ...)
-#   pip install "layerlens[hf]"     # HuggingFace transformers
-#   pip install "layerlens[clip]"   # open_clip
-#   pip install "layerlens[all]"
+#   pip install "featlens[timm]"   # timm models (DINO, CLIP, SigLIP, DeiT, ...)
+#   pip install "featlens[hf]"     # HuggingFace transformers
+#   pip install "featlens[clip]"   # open_clip
+#   pip install "featlens[all]"

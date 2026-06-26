@@ -1,4 +1,4 @@
-"""LayerLens quick-start — generates the README gallery.
+"""FeatLens quick-start — generates the README gallery.
 
 Run:  python examples/quickstart.py
 Uses the bundled example images; downloads small pretrained weights via timm/torchvision.
@@ -7,7 +7,7 @@ Outputs are written next to this file (the committed gallery the README displays
 
 from pathlib import Path
 
-import layerlens as ll
+import featlens as ll
 
 HERE = Path(__file__).parent
 IMAGES = HERE / "images"
@@ -29,8 +29,8 @@ ll.grid(["dino_vitb16", "dinov2_vitb14"], IMAGES / "cat.jpg", layers=[2, 5, 8, 1
 # 4) Bring your own model (escape hatch): any nn.Module via a feature_fn or hook target.
 import torch.nn as nn
 import torchvision
-from layerlens import FeatureExtractor, FeatureGrid
-from layerlens.adapters import custom_adapter
+from featlens import FeatureExtractor, FeatureGrid
+from featlens.adapters import custom_adapter
 
 resnet = torchvision.models.resnet50(weights="DEFAULT")
 trunk = nn.Sequential(*list(resnet.children())[:-2])  # -> [B, 2048, h, w]

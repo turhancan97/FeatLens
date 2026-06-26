@@ -18,7 +18,7 @@ def load(identifier: str, img_size: int = 224, pretrained: bool = True) -> Loade
         import timm
     except ImportError as exc:
         raise ImportError(
-            "The timm backend requires timm. Install it with `pip install \"layerlens[timm]\"`."
+            "The timm backend requires timm. Install it with `pip install \"featlens[timm]\"`."
         ) from exc
 
     try:

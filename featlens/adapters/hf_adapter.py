@@ -17,7 +17,7 @@ def load(identifier: str, img_size: int = 224, pretrained: bool = True) -> Loade
     except ImportError as exc:
         raise ImportError(
             "The hf backend requires transformers. Install it with "
-            "`pip install \"layerlens[hf]\"`."
+            "`pip install \"featlens[hf]\"`."
         ) from exc
 
     model = AutoModel.from_pretrained(identifier)

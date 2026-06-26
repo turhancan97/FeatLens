@@ -1,11 +1,11 @@
-"""LayerLens — model-agnostic feature-map visualization.
+"""FeatLens — model-agnostic feature-map visualization.
 
 Load any vision model (timm / HuggingFace / torch.hub / external repo / your own) and render
 PCA-to-RGB feature maps from any layer, as a model × layer grid.
 
 Quick start::
 
-    import layerlens as ll
+    import featlens as ll
     ll.grid(["dino_vitb16", "clip_large_openai"], "img.jpg", layers=[2, 5, 8, 11], out="grid.png")
     ll.visualize("dinov2_vitb14", "img.jpg", layers=[2, 5, 8, 11], out="row.png")   # scrub layers
     ll.compare(["dino_vitb16", "mae_vitb16"], "img.jpg", layer=-1, out="cmp.png")    # compare models
