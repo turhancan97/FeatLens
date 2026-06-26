@@ -13,6 +13,22 @@ Most "DINO PCA" scripts are welded to one model. LayerLens separates **represent
 (a small adapter layer over the model zoo) from **visualization** (robust PCA → RGB), so you can
 point it at a new model in seconds and compare models/layers side by side.
 
+## Gallery
+
+All produced by `examples/quickstart.py` on the bundled `cat.jpg`.
+
+**`grid(...)` — model × layer, overlaid on the image** (DINO vs DINOv2 across layers 2/5/8/11):
+
+<p align="center"><img src="examples/grid_overlay.png" alt="model x layer grid overlay" width="100%"></p>
+
+**`compare(...)` — models at the final layer** &nbsp;|&nbsp; **`custom_adapter` — a ResNet-50 (CNN escape hatch)**
+
+<p align="center">
+  <img src="examples/compare_models.png" alt="compare models at last layer" height="320">
+  &nbsp;&nbsp;
+  <img src="examples/resnet50.png" alt="resnet50 feature map" height="320">
+</p>
+
 ## Install
 
 ```bash
