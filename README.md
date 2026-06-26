@@ -1,5 +1,9 @@
 # FeatLens
 
+[![Tests](https://github.com/turhancan97/FeatLens/actions/workflows/test.yml/badge.svg)](https://github.com/turhancan97/FeatLens/actions/workflows/test.yml)
+[![PyPI](https://img.shields.io/pypi/v/featlens)](https://pypi.org/project/featlens/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **See what any vision model encodes.** FeatLens renders PCA-to-RGB **feature maps** for
 **any** vision model — DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, V-JEPA, CNNs, … — loaded from
 **any** source (timm, HuggingFace `transformers`, `torch.hub`, an external repo, or a model you
