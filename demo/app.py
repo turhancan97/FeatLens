@@ -112,4 +112,10 @@ with gr.Blocks(title="FeatLens") as demo:
 
 
 if __name__ == "__main__":
-    demo.launch()
+    import os
+    # HF Spaces serves the app on 0.0.0.0:7860; bind explicitly so launch() never
+    # falls back to wanting a share link. Locally this is reachable at localhost:7860.
+    demo.launch(
+        server_name=os.environ.get("GRADIO_SERVER_NAME", "0.0.0.0"),
+        server_port=int(os.environ.get("GRADIO_SERVER_PORT", "7860")),
+    )

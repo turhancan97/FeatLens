@@ -6,10 +6,11 @@
   <a href="https://github.com/turhancan97/FeatLens/actions/workflows/test.yml"><img src="https://github.com/turhancan97/FeatLens/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
   <a href="https://pypi.org/project/featlens/"><img src="https://img.shields.io/pypi/v/featlens" alt="PyPI"></a>
   <a href="https://turhancan97.github.io/FeatLens/"><img src="https://img.shields.io/badge/docs-online-blue" alt="Docs"></a>
+  <a href="https://huggingface.co/spaces/turhancan97/FeatLens-demo"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Demo-Spaces-yellow" alt="Hugging Face Space"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 </p>
 
-📖 **Documentation:** https://turhancan97.github.io/FeatLens/
+📖 **Documentation:** https://turhancan97.github.io/FeatLens/ &nbsp;·&nbsp; 🤗 **Live demo:** https://huggingface.co/spaces/turhancan97/FeatLens-demo
 
 **See what any vision model encodes.** FeatLens renders **feature maps** for
 **any** vision model — DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, V-JEPA, CNNs, … — loaded from
@@ -164,8 +165,10 @@ fl.correspond("dino_vitb16", "a.jpg", "b.jpg", seed=(0.4, 0.5), topk=3, out="cor
 
 `seed` is **normalized** image coords `(x, y) ∈ [0, 1]` (resolution/model independent). Pass
 `cache=True` to memoize extraction on disk (`$FEATLENS_CACHE_DIR`, else `~/.cache/featlens`) so
-re-renders are instant. An interactive **Gradio demo** lives in [`demo/`](demo/) — in `cosine` mode,
-click the image to move the seed. See the [docs](https://turhancan97.github.io/FeatLens/methods/).
+re-renders are instant. Try it in the browser on the
+[**🤗 live demo**](https://huggingface.co/spaces/turhancan97/FeatLens-demo) (or run [`demo/`](demo/)
+locally) — in `cosine` mode, click the image to move the seed. See the
+[docs](https://turhancan97.github.io/FeatLens/methods/).
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Bring your own model
 
