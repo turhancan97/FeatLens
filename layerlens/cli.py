@@ -27,7 +27,10 @@ def _build_parser() -> argparse.ArgumentParser:
                         "compare = many models, one layer.")
     p.add_argument("--layer", type=int, default=-1, help="Single layer for --mode compare.")
     p.add_argument("--out", default="layerlens_out.png", help="Output PNG path.")
-    p.add_argument("--img-size", type=int, default=224)
+    p.add_argument("--img-size", type=int, default=224, help="Model input size (must be divisible by patch size).")
+    p.add_argument("--resize-mode", choices=["squash", "crop", "pad"], default=None,
+                   help="squash=force square (may distort); crop=resize shortest side + center-crop; "
+                        "pad=resize longest side + pad. Default: squash.")
     p.add_argument("--basis", choices=["per_tile", "shared_per_model"], default=None,
                    help="PCA basis policy (defaults: grid/compare=per_tile, visualize=shared_per_model).")
     p.add_argument("--overlay", action="store_true", help="Blend feature map onto the source image.")
@@ -60,6 +63,9 @@ def main(argv: List[str] = None) -> None:
     import layerlens as ll
 
     common = dict(img_size=img_size, pretrained=pretrained, device=args.device)
+    resize_mode = args.resize_mode or cfg.get("resize_mode")
+    if resize_mode:
+        common["resize_mode"] = resize_mode
     if basis:
         common["basis"] = basis
     render_kw = dict(overlay=args.overlay, overlay_alpha=args.overlay_alpha)

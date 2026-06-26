@@ -26,6 +26,7 @@ class FeatureExtractor(nn.Module):
         img_size: int = 224,
         pretrained: bool = True,
         frozen: bool = True,
+        resize_mode: str = "squash",
         **load_kwargs,
     ):
         super().__init__()
@@ -42,6 +43,7 @@ class FeatureExtractor(nn.Module):
         self.model = self.lm.model
         self.name = self.lm.name
         self.img_size = int(img_size)
+        self.resize_mode = resize_mode
         self.patch_size = int(self.lm.patch_size)
         self.mean, self.std = self.lm.mean, self.lm.std
 
@@ -66,7 +68,7 @@ class FeatureExtractor(nn.Module):
     # ---- transforms / IO -------------------------------------------------
     @property
     def transform(self):
-        return build_transform(self.img_size, self.mean, self.std)
+        return build_transform(self.img_size, self.mean, self.std, self.resize_mode)
 
     def load_images(self, paths: Sequence[Union[str, Path]]) -> torch.Tensor:
         from PIL import Image

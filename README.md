@@ -61,6 +61,35 @@ layerlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \
 layerlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
 ```
 
+## Image size & resizing
+
+Images are resized to a square **`img_size` × `img_size`** before the model (default **224**).
+`img_size` must be divisible by the model's patch size (multiples of 16 for patch-16 models,
+14 for patch-14). Larger sizes give a finer feature grid at more compute:
+
+```python
+ll.visualize("dinov2_vitb14", "img.jpg", layers=[2, 5, 8, 11], img_size=448)   # 32x32 grid
+```
+
+For **non-square images**, choose how aspect ratio is handled with `resize_mode`:
+
+| `resize_mode` | behavior |
+|---------------|----------|
+| `squash` (default) | resize straight to `img_size²` — may distort |
+| `crop` | resize shortest side to `img_size`, center-crop — aspect preserved |
+| `pad` | resize longest side to `img_size`, pad to square — keeps the whole image |
+
+```python
+ll.grid([...], "wide.jpg", resize_mode="crop")          # Python
+```
+
+```bash
+layerlens --models dino_vitb16 --images wide.jpg --resize-mode pad --img-size 448 --out g.png
+```
+
+(`FeatureGrid(interpolation_size=…)` is separate — it only upscales the rendered tiles, not the
+model input.)
+
 ## Model sources
 
 | Source | How to pass it | Needs |

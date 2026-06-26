@@ -43,16 +43,51 @@ def resolve_mean_std(norm) -> Tuple[Sequence[float], Sequence[float]]:
     raise ValueError(f"Unsupported normalization spec: {norm!r}")
 
 
-def build_transform(img_size: int, mean: Sequence[float], std: Sequence[float]):
+class _ResizeLongestPad:
+    """Resize so the longest side == ``size`` (aspect preserved), then center-pad to a square."""
+
+    def __init__(self, size: int, fill: int = 0):
+        self.size = int(size)
+        self.fill = fill
+
+    def __call__(self, img):
+        from torchvision.transforms import functional as TF
+        from torchvision.transforms import InterpolationMode
+
+        w, h = img.size
+        scale = self.size / max(w, h)
+        nw, nh = max(1, round(w * scale)), max(1, round(h * scale))
+        img = TF.resize(img, [nh, nw], interpolation=InterpolationMode.BICUBIC)
+        pad_l = (self.size - nw) // 2
+        pad_t = (self.size - nh) // 2
+        pad_r = self.size - nw - pad_l
+        pad_b = self.size - nh - pad_t
+        return TF.pad(img, [pad_l, pad_t, pad_r, pad_b], fill=self.fill)
+
+
+def build_transform(img_size: int, mean: Sequence[float], std: Sequence[float],
+                    resize_mode: str = "squash"):
+    """Build a preprocessing transform.
+
+    ``resize_mode``:
+      - ``"squash"`` (default): resize to ``img_size x img_size`` (may distort aspect ratio).
+      - ``"crop"``  : resize the shortest side to ``img_size``, then center-crop (aspect preserved).
+      - ``"pad"``   : resize the longest side to ``img_size``, then pad to a square (whole image kept).
+    All modes yield a square ``img_size x img_size`` tensor (so the feature grid stays square).
+    """
     from torchvision import transforms as T
 
-    return T.Compose(
-        [
-            T.Resize((img_size, img_size), interpolation=T.InterpolationMode.BICUBIC),
-            T.ToTensor(),
-            T.Normalize(mean=list(mean), std=list(std)),
-        ]
-    )
+    bicubic = T.InterpolationMode.BICUBIC
+    if resize_mode == "squash":
+        resize = [T.Resize((img_size, img_size), interpolation=bicubic)]
+    elif resize_mode == "crop":
+        resize = [T.Resize(img_size, interpolation=bicubic), T.CenterCrop(img_size)]
+    elif resize_mode == "pad":
+        resize = [_ResizeLongestPad(img_size)]
+    else:
+        raise ValueError(f"Unknown resize_mode '{resize_mode}'. Use 'squash', 'crop', or 'pad'.")
+
+    return T.Compose(resize + [T.ToTensor(), T.Normalize(mean=list(mean), std=list(std))])
 
 
 def denormalize(image: torch.Tensor, mean: Sequence[float], std: Sequence[float]) -> np.ndarray:

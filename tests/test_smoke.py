@@ -37,6 +37,22 @@ def test_custom_escape_hatch_callable():
     assert out.shape == (1, 1, 32, 14, 14)
 
 
+def test_resize_modes_yield_square():
+    from PIL import Image
+    from layerlens.preprocess import build_transform
+
+    img = Image.new("RGB", (640, 360))  # non-square
+    for mode in ("squash", "crop", "pad"):
+        t = build_transform(224, [0.5] * 3, [0.5] * 3, resize_mode=mode)(img)
+        assert tuple(t.shape) == (3, 224, 224)
+
+
+def test_img_size_changes_grid():
+    ex = FeatureExtractor("vit_tiny_patch16_224", layers=[-1], img_size=384, pretrained=False)
+    out = ex(torch.randn(1, 3, 384, 384))
+    assert out.shape[-2:] == (24, 24)  # 384 / 16
+
+
 def test_grid_render(tmp_path):
     out = FeatureGrid(["vit_tiny_patch16_224"], layers=[1, -1], pretrained=False).render(
         "examples/images/cat.jpg", out_path=tmp_path / "g.png"

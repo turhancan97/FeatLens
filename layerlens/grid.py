@@ -34,12 +34,14 @@ class FeatureGrid:
         outlier_threshold: float = 2.0,
         remove_first_component: bool = False,
         interpolation_size: int = 224,
+        resize_mode: str = "squash",
     ):
         if basis not in ("per_tile", "shared_per_model"):
             raise ValueError("basis must be 'per_tile' or 'shared_per_model'.")
         self.layers = list(layers) if layers is not None else [-1]
         self.img_size = img_size
         self.pretrained = pretrained
+        self.resize_mode = resize_mode
         self.device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
         self.basis = basis
         self.outlier_threshold = outlier_threshold
@@ -53,11 +55,11 @@ class FeatureGrid:
         if isinstance(m, tuple):
             label, spec = m
             ex = FeatureExtractor(spec, layers=self.layers, img_size=self.img_size,
-                                  pretrained=self.pretrained)
+                                  pretrained=self.pretrained, resize_mode=self.resize_mode)
             return self._short_label(label), ex
         # Use the original (usually short) spec as the row label, not the resolved timm id.
         ex = FeatureExtractor(m, layers=self.layers, img_size=self.img_size,
-                              pretrained=self.pretrained)
+                              pretrained=self.pretrained, resize_mode=self.resize_mode)
         return self._short_label(m), ex
 
     @staticmethod
