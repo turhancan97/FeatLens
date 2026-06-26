@@ -6,7 +6,7 @@
 built yourself), and from **any layer**, as a clean **model × layer** grid.
 
 <p align="center">
-  <img src="examples/dino_layers.png" alt="DINO feature maps across layers" width="100%">
+  <img src="examples/feat_cat.png" alt="DINO feature maps across layers" width="100%">
 </p>
 
 Most "DINO PCA" scripts are welded to one model. LayerLens separates **representation access**
@@ -15,7 +15,16 @@ point it at a new model in seconds and compare models/layers side by side.
 
 ## Gallery
 
-All produced by `examples/quickstart.py` on the bundled `cat.jpg`.
+All produced by `examples/quickstart.py` on the three bundled images. Sizes below are the
+**originals**; each image is resized to `img_size` (default 224) before the model.
+
+**`visualize(...)` — DINO ViT-B/16 feature maps across layers 2 / 5 / 8 / 11:**
+
+| Image (original size) | Source | Feature maps |
+|---|---|---|
+| `astronaut.jpg` · 512×512 | <img src="examples/images/astronaut.jpg" width="110"> | <img src="examples/feat_astronaut.png" width="430"> |
+| `cat.jpg` · 451×300 | <img src="examples/images/cat.jpg" width="110"> | <img src="examples/feat_cat.png" width="430"> |
+| `coffee.jpg` · 600×400 | <img src="examples/images/coffee.jpg" width="110"> | <img src="examples/feat_coffee.png" width="430"> |
 
 **`grid(...)` — model × layer, overlaid on the image** (DINO vs DINOv2 across layers 2/5/8/11):
 

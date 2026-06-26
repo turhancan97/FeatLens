@@ -1,7 +1,8 @@
-"""LayerLens quick-start — three ways to look at feature maps.
+"""LayerLens quick-start — generates the README gallery.
 
 Run:  python examples/quickstart.py
-(uses the bundled example images; downloads small pretrained weights via timm).
+Uses the bundled example images; downloads small pretrained weights via timm/torchvision.
+Outputs are written next to this file (the committed gallery the README displays).
 """
 
 from pathlib import Path
@@ -9,29 +10,31 @@ from pathlib import Path
 import layerlens as ll
 
 HERE = Path(__file__).parent
-IMG = HERE / "images" / "cat.jpg"
-OUT = HERE / "out"
+IMAGES = HERE / "images"
+NAMES = ["astronaut", "cat", "coffee"]
 
-# 1) One model, scrub layers (shared PCA basis -> colors comparable across the row).
-ll.visualize("dino_vitb16", IMG, layers=[2, 5, 8, 11], out=OUT / "dino_layers.png")
+# 1) Per-image feature maps: one DINO ViT-B/16 row per image, across layers (shared basis).
+for name in NAMES:
+    ll.visualize("dino_vitb16", IMAGES / f"{name}.jpg", layers=[2, 5, 8, 11],
+                 out=HERE / f"feat_{name}.png")
 
 # 2) Compare models at the final layer (per-tile basis).
-ll.compare(["dino_vitb16", "dinov2_vitb14", "clip_large_openai"], IMG, layer=-1,
-           out=OUT / "compare_models.png")
+ll.compare(["dino_vitb16", "dinov2_vitb14", "clip_large_openai"], IMAGES / "cat.jpg",
+           layer=-1, out=HERE / "compare_models.png")
 
 # 3) Full model x layer grid, overlaid on the source image.
-ll.grid(["dino_vitb16", "dinov2_vitb14"], IMG, layers=[2, 5, 8, 11],
-        out=OUT / "grid_overlay.png", overlay=True)
+ll.grid(["dino_vitb16", "dinov2_vitb14"], IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
+        out=HERE / "grid_overlay.png", overlay=True)
 
-# 4) Bring your own model (escape hatch): any nn.Module via a feature_fn or a hook target.
+# 4) Bring your own model (escape hatch): any nn.Module via a feature_fn or hook target.
 import torch.nn as nn
 import torchvision
-from layerlens import FeatureExtractor
+from layerlens import FeatureExtractor, FeatureGrid
 from layerlens.adapters import custom_adapter
 
 resnet = torchvision.models.resnet50(weights="DEFAULT")
 trunk = nn.Sequential(*list(resnet.children())[:-2])  # -> [B, 2048, h, w]
 lm = custom_adapter.load(trunk, patch_size=32, feature_fn=lambda m, x: m(x), name="resnet50")
-ll.FeatureGrid([FeatureExtractor(lm)]).render(IMG, out_path=OUT / "resnet50.png")
+ll.FeatureGrid([FeatureExtractor(lm)]).render(IMAGES / "cat.jpg", out_path=HERE / "resnet50.png")
 
-print(f"Wrote visualizations to {OUT}")
+print(f"Wrote gallery to {HERE}")
