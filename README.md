@@ -150,6 +150,24 @@ puts the repo on `sys.path`, builds the model, and hooks its blocks.
 The extraction core adapts the `FrozenBackbone` pattern; the PCA is adapted from the SpaRRTa
 feature-map script.
 
+## Releasing
+
+Releases publish to [PyPI](https://pypi.org/project/featlens/) automatically via
+`.github/workflows/publish.yml` (PyPI **Trusted Publishing** — no API token stored in the repo).
+
+One-time setup on PyPI: add a *trusted publisher* for the project (Account → Publishing) with
+owner `turhancan97`, repository `FeatLens`, workflow `publish.yml`, environment `pypi`. PyPI
+supports a *pending* publisher so the very first release can also go through Actions.
+
+Then cut a release by pushing a tag:
+
+```bash
+# bump the version in pyproject.toml first, then:
+git tag v0.1.0 && git push origin v0.1.0
+```
+
+The workflow builds the sdist + wheel, runs `twine check`, and uploads to PyPI.
+
 ## License
 
 [MIT](LICENSE).
