@@ -60,11 +60,15 @@ The cache directory is `$FEATLENS_CACHE_DIR` if set, else `~/.cache/featlens`. O
 
 ## Interactive demo
 
-A Gradio app lives in [`demo/`](https://github.com/turhancan97/FeatLens/tree/main/demo): pick a
-model, layer and method, and in `cosine` mode **click the image** to move the seed patch. A second
-tab does correspondence between two images.
+Try it in the browser on the
+[**🤗 live demo**](https://huggingface.co/spaces/turhancan97/FeatLens-demo): pick a model, layer
+and method, and in `cosine` mode **click the image** to move the seed patch. A second tab does
+correspondence between two images.
+
+The same app lives in [`demo/`](https://github.com/turhancan97/FeatLens/tree/main/demo) to run
+locally:
 
 ```bash
-pip install "featlens[timm,hf]" gradio
+pip install "featlens[timm]" gradio
 python demo/app.py
 ```
