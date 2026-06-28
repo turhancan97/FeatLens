@@ -1,17 +1,21 @@
 # FeatLens
 
-**See what any vision model encodes.** FeatLens renders PCA-to-RGB **feature maps** for **any**
+🤗 **Try the [live demo](https://huggingface.co/spaces/turhancan97/FeatLens-demo)** — no install.
+
+**See what any vision model encodes.** FeatLens renders **feature maps** for **any**
 vision model — DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, V-JEPA, CNNs, … — loaded from **any**
 source (timm, HuggingFace `transformers`, `torch.hub`, an external repo, or a model you built
-yourself), and from **any layer**, as a clean **model × layer** grid.
+yourself), and from **any layer**, as a clean **model × layer** grid. Color the features by robust
+**PCA**, **cosine-similarity** to a seed patch, **k-means** segmentation, or a **foreground** mask
+([methods](methods.md)) — and match patches **across two images**.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" alt="DINO feature maps across layers" width="100%">
 </p>
 
 Most "DINO PCA" scripts are welded to one model. FeatLens separates **representation access**
-(a small adapter layer over the model zoo) from **visualization** (robust PCA → RGB), so you can
-point it at a new model in seconds and compare models/layers side by side.
+(a small adapter layer over the model zoo) from **visualization** (PCA / cosine / k-means /
+foreground), so you can point it at a new model in seconds and compare models/layers side by side.
 
 ```bash
 pip install "featlens[timm]"
