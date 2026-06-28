@@ -167,8 +167,15 @@ with gr.Blocks(title="FeatLens") as demo:
         cout = gr.Image(label="Correspondence")
         cmodel.change(on_model_change, [cmodel, clayer], clayer)
         cgo.click(render_correspond, [a, b, cmodel, clayer, csx, csy, ctopk], cout)
-        gr.Examples(examples=CORRESPOND_PAIRS, inputs=[a, b], examples_per_page=4,
-                    label="Example pairs — two views of a dog, two of a cat")
+
+        # NOTE: a multi-image gr.Examples renders as a table whose image cells collapse to
+        # nothing, so the pairs were invisible. Load each pair into A/B with a button instead.
+        gr.Markdown("**Example pairs** — load two views of the same animal, then hit **Match**:")
+        with gr.Row():
+            dog_btn = gr.Button("🐕 Dog pair")
+            cat_btn = gr.Button("🐈 Cat pair")
+        dog_btn.click(lambda: tuple(CORRESPOND_PAIRS[0]), None, [a, b])
+        cat_btn.click(lambda: tuple(CORRESPOND_PAIRS[1]), None, [a, b])
 
 
 if __name__ == "__main__":
