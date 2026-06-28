@@ -32,8 +32,16 @@ DEFAULT_MODEL = next((m for m in _PREFERRED if m in MODELS), MODELS[0])
 METHODS = ["pca", "cosine", "kmeans", "foreground"]
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-EXAMPLE_IMAGES = [os.path.join(HERE, "examples", "images", n)
-                  for n in ("cat.jpg", "coffee.jpg", "astronaut.jpg")]
+
+
+def _ex(name: str) -> str:
+    return os.path.join(HERE, "examples", "images", name)
+
+
+EXAMPLE_IMAGES = [_ex(n) for n in ("cat.jpg", "coffee.jpg", "astronaut.jpg")]
+# Correspondence works on two *different* views of the same thing: a dog pair and a cat pair.
+CORRESPOND_PAIRS = [[_ex("dog1.jpg"), _ex("dog2.jpg")],
+                    [_ex("cat1.jpg"), _ex("cat2.jpg")]]
 
 
 def _depth_for(model: str) -> int:
@@ -159,8 +167,8 @@ with gr.Blocks(title="FeatLens") as demo:
         cout = gr.Image(label="Correspondence")
         cmodel.change(on_model_change, [cmodel, clayer], clayer)
         cgo.click(render_correspond, [a, b, cmodel, clayer, csx, csy, ctopk], cout)
-        gr.Examples(examples=[[EXAMPLE_IMAGES[0], EXAMPLE_IMAGES[1]]], inputs=[a, b],
-                    label="Example pair")
+        gr.Examples(examples=CORRESPOND_PAIRS, inputs=[a, b], examples_per_page=4,
+                    label="Example pairs — two views of a dog, two of a cat")
 
 
 if __name__ == "__main__":
