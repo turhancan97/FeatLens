@@ -68,6 +68,17 @@ def on_model_change(model, layer):
     return gr.update(maximum=depth - 1, value=min(int(layer), depth - 1))
 
 
+def on_method_change(method):
+    """Show only the controls the chosen method actually uses (k for kmeans, seed for cosine)."""
+    is_kmeans = method == "kmeans"
+    is_cosine = method == "cosine"
+    return (
+        gr.update(visible=is_kmeans),  # k slider
+        gr.update(visible=is_cosine),  # seed hint
+        gr.update(visible=is_cosine),  # seed x/y row
+    )
+
+
 def _tmp_png() -> str:
     return tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
 
@@ -133,8 +144,10 @@ with gr.Blocks(title="FeatLens") as demo:
                 method = gr.Radio(METHODS, value="pca", label="Method")
                 layer = gr.Slider(0, _depth_for(DEFAULT_MODEL) - 1, value=11, step=1,
                                   label="Layer (block index)")
-                k = gr.Slider(2, 16, value=6, step=1, label="k (kmeans)")
-                with gr.Row():
+                k = gr.Slider(2, 16, value=6, step=1, label="clusters (k)", visible=False)
+                seed_hint = gr.Markdown("👆 *Click the image to move the seed patch.*",
+                                        visible=False)
+                with gr.Row(visible=False) as seed_row:
                     seed_x = gr.Number(0.5, label="seed x")
                     seed_y = gr.Number(0.5, label="seed y")
                 go = gr.Button("Render", variant="primary")
@@ -145,13 +158,19 @@ with gr.Blocks(title="FeatLens") as demo:
         # A filepath Image needs a numpy copy to read click coords; load it for the select event.
         img_np = gr.Image(visible=False, type="numpy")
         img.change(lambda p: p, img, img_np)
-        img_np.select(on_click, img_np, [seed_x, seed_y])
 
         inputs = [img, model, layer, method, k, seed_x, seed_y]
+        method.change(on_method_change, method, [k, seed_hint, seed_row])
         model.change(on_model_change, [model, layer], layer)
         go.click(render_view, inputs, out)
-        for comp in (model, method, layer, k, seed_x, seed_y):
+        # Re-render on a control change. A click updates *both* seed numbers at once, so render
+        # once via .then (not on each seed's .change) to avoid a double render; typed seeds
+        # render on Enter.
+        for comp in (model, method, layer, k):
             comp.change(render_view, inputs, out)
+        img_np.select(on_click, img_np, [seed_x, seed_y]).then(render_view, inputs, out)
+        seed_x.submit(render_view, inputs, out)
+        seed_y.submit(render_view, inputs, out)
 
     with gr.Tab("Correspondence"):
         with gr.Row():
@@ -176,6 +195,11 @@ with gr.Blocks(title="FeatLens") as demo:
             cat_btn = gr.Button("🐈 Cat pair")
         dog_btn.click(lambda: tuple(CORRESPOND_PAIRS[0]), None, [a, b])
         cat_btn.click(lambda: tuple(CORRESPOND_PAIRS[1]), None, [a, b])
+
+
+# Serialize requests: on a free-CPU Space, two people rendering a ViT-L at once can stall or OOM
+# the box. The queue runs them one at a time and shows each visitor their position.
+demo.queue(max_size=24)
 
 
 if __name__ == "__main__":

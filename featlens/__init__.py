@@ -21,7 +21,7 @@ from .extractor import FeatureExtractor
 from .grid import FeatureGrid
 from .correspond import correspond
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond"]
 
 

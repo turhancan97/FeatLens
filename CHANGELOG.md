@@ -6,6 +6,17 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-28
+
+### Added
+- Feature cache is now bounded (default **2 GiB**, LRU eviction); override with
+  `$FEATLENS_CACHE_MAX_BYTES` (`0` = unlimited).
+- Demo smoke test (`tests/test_demo.py`) so CI catches a broken `demo/app.py`.
+
+### Changed
+- Demo: serialize requests with a queue; show only the controls each method uses (k for
+  k-means, seed for cosine); render once per image click; dog/cat correspondence example pairs.
+
 ## [0.2.0] - 2026-06-26
 
 Beyond PCA, now interactive — four new ways to look at the same `[B, L, D, h, w]` feature
@@ -43,6 +54,7 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/turhancan97/FeatLens/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/turhancan97/FeatLens/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/turhancan97/FeatLens/releases/tag/v0.1.0

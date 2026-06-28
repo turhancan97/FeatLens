@@ -56,7 +56,9 @@ fl.grid(["dino_vitb16"], "img.jpg", layers=[2, 5, 8, 11], method="cosine", cache
 ```
 
 The cache directory is `$FEATLENS_CACHE_DIR` if set, else `~/.cache/featlens`. On the CLI use
-`--cache`.
+`--cache`. It is bounded to **2 GiB** by default — once exceeded, the least-recently-used entries
+are evicted on the next write. Override the limit with `$FEATLENS_CACHE_MAX_BYTES` (in bytes; set
+it to `0` for no limit).
 
 ## Interactive demo
 

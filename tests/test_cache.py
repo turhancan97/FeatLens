@@ -26,6 +26,31 @@ def test_make_key_sensitivity():
     assert k0 != make_key(**{**base, "model_id": "n"})           # model invalidates
 
 
+def test_cache_evicts_over_max_bytes(tmp_path):
+    t = torch.randn(64, 64)
+    probe = FeatureCache(str(tmp_path))
+    probe.put("probe", t)
+    one = (tmp_path / "probe.pt").stat().st_size
+    (tmp_path / "probe.pt").unlink()
+
+    cap = int(one * 2.5)                      # room for ~2 entries
+    cache = FeatureCache(str(tmp_path), max_bytes=cap)
+    for key in ("a", "b", "c", "d"):
+        cache.put(key, t)
+
+    remaining = list(tmp_path.glob("*.pt"))
+    assert sum(p.stat().st_size for p in remaining) <= cap   # stayed under the cap
+    assert len(remaining) < 4                                # something was evicted
+    assert (tmp_path / "d.pt").exists()                      # the newest entry survived
+
+
+def test_cache_unlimited_when_max_bytes_zero(tmp_path):
+    cache = FeatureCache(str(tmp_path), max_bytes=0)
+    for key in ("a", "b", "c"):
+        cache.put(key, torch.randn(32, 32))
+    assert len(list(tmp_path.glob("*.pt"))) == 3            # nothing evicted
+
+
 def test_cache_hit_avoids_recompute(tmp_path):
     img = "examples/images/cat.jpg"
     kw = dict(layers=[5, 11], pretrained=False, device="cpu", cache=True, cache_dir=str(tmp_path))
