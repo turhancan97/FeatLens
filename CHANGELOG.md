@@ -6,6 +6,15 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+- Feature cache is now bounded (default **2 GiB**, LRU eviction); override with
+  `$FEATLENS_CACHE_MAX_BYTES` (`0` = unlimited).
+- Demo smoke test (`tests/test_demo.py`) so CI catches a broken `demo/app.py`.
+
+### Changed
+- Demo: serialize requests with a queue; show only the controls each method uses (k for
+  k-means, seed for cosine); render once per image click; dog/cat correspondence example pairs.
+
 ## [0.2.0] - 2026-06-26
 
 Beyond PCA, now interactive — four new ways to look at the same `[B, L, D, h, w]` feature

@@ -150,6 +150,11 @@ block `i` to `hidden_states[i+1]` (skipping the embedding output) for you.
 Every method consumes the same dense feature stack, so it works on `grid` / `visualize` /
 `compare` and across any layer:
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/demo_cosine.gif" alt="cosine similarity follows the clicked seed patch" width="70%"><br>
+  <em><code>cosine</code> mode: the heatmap (right) tracks the seed patch (white dot) — click anywhere on the <a href="https://huggingface.co/spaces/turhancan97/FeatLens-demo">🤗 live demo</a>.</em>
+</p>
+
 | `method` | shows | extra args |
 |----------|-------|------------|
 | `pca` (default) | robust PCA → RGB | `basis`, `remove_first_component` |
