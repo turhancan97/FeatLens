@@ -11,6 +11,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
   backbone (`vit_small_patch8_224.dino`) at 768 px — a fine 96×96 feature grid that resolves thin
   structures (whiskers, feather barbs, individual fruit). New high-res CC-licensed example images
   (peacock, cat, market) with attribution in `examples/images/CREDITS.md`.
+- The `correspond()` showcase now matches two *related* images — a real cat's eye to a watercolor
+  cat (photo→illustration) — instead of the unrelated cat/coffee pair.
 
 ## [0.2.3] - 2026-06-29
 

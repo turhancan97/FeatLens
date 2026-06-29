@@ -63,7 +63,9 @@ and method figures further down use DINO ViT-B/16 at the default 224px.
 | `kmeans` (k=6) | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_kmeans.png" width="520"> |
 | `foreground` | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_foreground.png" width="520"> |
 
-**`correspond(...)` — seed a patch in image A, find the matches in image B:**
+**`correspond(...)` — seed a patch in image A, find the matches in image B.** Here the seed is on
+a real cat's eye; DINOv2 features match the *same semantic part* on a watercolor cat, across the
+photo→illustration domain gap:
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/correspond.png" alt="cross-image correspondence" height="300"></p>
 

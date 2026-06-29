@@ -36,9 +36,10 @@ ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
 ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
              method="foreground", out=HERE / "method_foreground.png")
 
-# 3c) Cross-image correspondence: seed a patch in cat, find it in coffee.
-ll.correspond("dinov2_vitb14", IMAGES / "cat.jpg", IMAGES / "coffee.jpg",
-              layer=-1, seed=(0.5, 0.45), topk=3, out=HERE / "correspond.png")
+# 3c) Cross-image correspondence: seed the real cat's eye, find the matching part in a
+#     watercolor cat — DINOv2 features match the same semantic part across photo and illustration.
+ll.correspond("dinov2_vitb14", IMAGES / "cat_hires.jpg", IMAGES / "cat_cartoon.jpg",
+              layer=-1, seed=(0.40, 0.40), topk=3, out=HERE / "correspond.png")
 
 # 4) Bring your own model (escape hatch): any nn.Module via a feature_fn or hook target.
 import torch.nn as nn
