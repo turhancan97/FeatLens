@@ -41,12 +41,15 @@ def correspond(
     device: Optional[str] = None,
     colormap: str = "turbo",
     interpolation_size: int = 224,
+    arrows: bool = True,
     out: Optional[Union[str, Path]] = None,
 ):
     """Render seed-patch correspondence between two images.
 
     Left: image A with the seed patch marked. Right: image B as a cosine-similarity heatmap with
-    the top-``topk`` matching patches marked. Returns the saved path (if ``out``) or the figure.
+    the top-``topk`` matching patches marked. When ``arrows`` is set (default), a line is drawn
+    from the seed to each match across the two panels. Returns the saved path (if ``out``) or the
+    figure.
     """
     from PIL import Image
 
@@ -74,7 +77,7 @@ def correspond(
 
     return _compose_pair(
         src_a, heat_up, (r, c), [divmod(int(i), w) for i in top_cells], (h, w),
-        interpolation_size, out)
+        interpolation_size, arrows, out)
 
 
 # ---- rendering helpers ----------------------------------------------------
@@ -92,10 +95,12 @@ def _interp_rgb(rgb: np.ndarray, size: int) -> np.ndarray:
     return t[0].permute(1, 2, 0).numpy()
 
 
-def _compose_pair(src_a, heat_b, seed_cell, match_cells, grid_hw, size, out):
+def _compose_pair(src_a, heat_b, seed_cell, match_cells, grid_hw, size, arrows, out):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import matplotlib.patheffects as pe
+    from matplotlib.patches import ConnectionPatch
 
     h, w = grid_hw
     sy, sx = (seed_cell[0] + 0.5) / h * size, (seed_cell[1] + 0.5) / w * size
@@ -105,10 +110,24 @@ def _compose_pair(src_a, heat_b, seed_cell, match_cells, grid_hw, size, out):
     axes[0].scatter([sx], [sy], s=180, marker="*", c="white", edgecolors="black", linewidths=1.2)
     axes[0].set_title("source (seed)", fontsize=11)
     axes[1].imshow(np.clip(heat_b, 0, 1))
-    for (my, mx) in match_cells:
+    outline = [pe.withStroke(linewidth=3.0, foreground="black")]
+    for rank, (my, mx) in enumerate(match_cells):
         py, px = (my + 0.5) / h * size, (mx + 0.5) / w * size
-        axes[1].scatter([px], [py], s=120, marker="o", facecolors="none",
-                        edgecolors="white", linewidths=1.8)
+        best = rank == 0
+        axes[1].scatter([px], [py], s=140 if best else 110, marker="o", facecolors="none",
+                        edgecolors="white", linewidths=2.0 if best else 1.5,
+                        path_effects=outline)
+        if arrows:
+            # An arrow from the seed (panel A) to this match (panel B), drawn across both axes.
+            con = ConnectionPatch(
+                xyA=(sx, sy), coordsA=axes[0].transData,
+                xyB=(px, py), coordsB=axes[1].transData,
+                arrowstyle="-|>", color="white", linewidth=2.0 if best else 1.3,
+                mutation_scale=16 if best else 11, alpha=1.0 if best else 0.6,
+                shrinkA=6, shrinkB=6, zorder=5)
+            con.set_path_effects(outline)
+            con.set_clip_on(False)
+            fig.add_artist(con)
     axes[1].set_title("target (cosine similarity)", fontsize=11)
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])

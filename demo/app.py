@@ -4,7 +4,7 @@ Two tabs:
 - **Feature views** — pick a model, layer and method (PCA / cosine / k-means / foreground) and
   render a feature map. In ``cosine`` mode, *click the image* to move the seed patch and get a
   live similarity heatmap.
-- **Correspondence** — seed a patch in image A and find the matching patches in image B.
+- **Correspondence** — *click* a patch in image A and find the matching patches in image B.
 
 Run locally::
 
@@ -21,6 +21,7 @@ import os
 import tempfile
 
 import gradio as gr
+from PIL import Image
 
 import featlens as ll
 from featlens.registry import BACKBONE_REGISTRY
@@ -75,7 +76,7 @@ def on_method_change(method):
     return (
         gr.update(visible=is_kmeans),  # k slider
         gr.update(visible=is_cosine),  # seed hint
-        gr.update(visible=is_cosine),  # seed x/y row
+        gr.update(visible=is_cosine),  # seed readout
     )
 
 
@@ -83,7 +84,12 @@ def _tmp_png() -> str:
     return tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
 
 
-def render_view(image, model, layer, method, k, seed_x, seed_y):
+def _seed_caption(seed) -> str:
+    x, y = seed
+    return f"<sub>🎯 seed at x={x:.2f}, y={y:.2f}</sub>"
+
+
+def render_view(image, model, layer, method, k, seed):
     if not image:
         return None
     out = _tmp_png()
@@ -91,7 +97,7 @@ def render_view(image, model, layer, method, k, seed_x, seed_y):
     try:
         ll.visualize(
             model, image, layers=[int(layer)], out=out,
-            method=method, k=int(k), seed=(seed_x, seed_y),
+            method=method, k=int(k), seed=tuple(seed),
             img_size=224, cache=True, device=None,
         )
     except Exception as e:  # e.g. layer index out of range for a 12-block ViT-S/B
@@ -100,15 +106,27 @@ def render_view(image, model, layer, method, k, seed_x, seed_y):
 
 
 def on_click(image, evt: gr.SelectData):
-    """Click on the image -> normalized seed coords (for cosine mode)."""
-    if image is None or evt is None:
-        return 0.5, 0.5
-    h, w = image.shape[:2]
-    x, y = evt.index  # (col, row) in pixels
-    return round(x / max(w, 1), 3), round(y / max(h, 1), 3)
+    """Image click -> (normalized seed, caption). Shared by both tabs.
+
+    ``image`` is whatever the clicked component holds — a filepath (our input Images) or a numpy
+    array — and ``evt.index`` is the click in original-image pixels, so we just need (w, h).
+    """
+    seed = (0.5, 0.5)
+    if image is not None and evt is not None:
+        try:
+            if isinstance(image, str):
+                with Image.open(image) as im:
+                    w, h = im.size
+            else:  # numpy array (H, W, C)
+                h, w = image.shape[:2]
+            x, y = evt.index  # (col, row) in pixels
+            seed = (round(x / max(w, 1), 3), round(y / max(h, 1), 3))
+        except Exception:
+            seed = (0.5, 0.5)
+    return seed, _seed_caption(seed)
 
 
-def render_correspond(image_a, image_b, model, layer, seed_x, seed_y, topk):
+def render_correspond(image_a, image_b, model, layer, seed, topk):
     if not image_a or not image_b:
         return None
     out = _tmp_png()
@@ -116,7 +134,7 @@ def render_correspond(image_a, image_b, model, layer, seed_x, seed_y, topk):
     try:
         ll.correspond(
             model, image_a, image_b, layer=int(layer),
-            seed=(seed_x, seed_y), topk=int(topk), img_size=224, out=out,
+            seed=tuple(seed), topk=int(topk), img_size=224, out=out,
         )
     except Exception as e:
         raise gr.Error(f"{type(e).__name__}: {e}")
@@ -137,6 +155,7 @@ with gr.Blocks(title="FeatLens") as demo:
     )
 
     with gr.Tab("Feature views"):
+        seed = gr.State((0.5, 0.5))  # set by clicking the image, not typed
         with gr.Row():
             with gr.Column():
                 img = gr.Image(label="Image", type="filepath")
@@ -145,51 +164,45 @@ with gr.Blocks(title="FeatLens") as demo:
                 layer = gr.Slider(0, _depth_for(DEFAULT_MODEL) - 1, value=11, step=1,
                                   label="Layer (block index)")
                 k = gr.Slider(2, 16, value=6, step=1, label="clusters (k)", visible=False)
-                seed_hint = gr.Markdown("👆 *Click the image to move the seed patch.*",
+                seed_hint = gr.Markdown("👆 *Click the image to set the seed patch.*",
                                         visible=False)
-                with gr.Row(visible=False) as seed_row:
-                    seed_x = gr.Number(0.5, label="seed x")
-                    seed_y = gr.Number(0.5, label="seed y")
+                seed_readout = gr.Markdown(_seed_caption((0.5, 0.5)), visible=False)
                 go = gr.Button("Render", variant="primary")
             out = gr.Image(label="Feature map")
 
         gr.Examples(examples=[[p] for p in EXAMPLE_IMAGES], inputs=img, label="Example images")
 
-        # A filepath Image needs a numpy copy to read click coords; load it for the select event.
-        img_np = gr.Image(visible=False, type="numpy")
-        img.change(lambda p: p, img, img_np)
-
-        inputs = [img, model, layer, method, k, seed_x, seed_y]
-        method.change(on_method_change, method, [k, seed_hint, seed_row])
+        inputs = [img, model, layer, method, k, seed]
+        method.change(on_method_change, method, [k, seed_hint, seed_readout])
         model.change(on_model_change, [model, layer], layer)
         go.click(render_view, inputs, out)
-        # Re-render on a control change. A click updates *both* seed numbers at once, so render
-        # once via .then (not on each seed's .change) to avoid a double render; typed seeds
-        # render on Enter.
         for comp in (model, method, layer, k):
             comp.change(render_view, inputs, out)
-        img_np.select(on_click, img_np, [seed_x, seed_y]).then(render_view, inputs, out)
-        seed_x.submit(render_view, inputs, out)
-        seed_y.submit(render_view, inputs, out)
+        # Click the image to set the seed (cosine), then re-render.
+        img.select(on_click, img, [seed, seed_readout]).then(render_view, inputs, out)
 
     with gr.Tab("Correspondence"):
+        cseed = gr.State((0.4, 0.5))  # set by clicking image A
         with gr.Row():
-            a = gr.Image(label="Image A (seed)", type="filepath")
+            a = gr.Image(label="Image A — click to set the seed", type="filepath")
             b = gr.Image(label="Image B (target)", type="filepath")
+        cseed_readout = gr.Markdown(_seed_caption((0.4, 0.5)) + " — click image A to move it")
         with gr.Row():
             cmodel = gr.Dropdown(MODELS, value=DEFAULT_MODEL, label="Model")
             clayer = gr.Slider(0, _depth_for(DEFAULT_MODEL) - 1, value=11, step=1, label="Layer")
-            csx = gr.Number(0.4, label="seed x")
-            csy = gr.Number(0.5, label="seed y")
             ctopk = gr.Slider(1, 10, value=3, step=1, label="top-k matches")
         cgo = gr.Button("Match", variant="primary")
         cout = gr.Image(label="Correspondence")
+
+        cinputs = [a, b, cmodel, clayer, cseed, ctopk]
         cmodel.change(on_model_change, [cmodel, clayer], clayer)
-        cgo.click(render_correspond, [a, b, cmodel, clayer, csx, csy, ctopk], cout)
+        cgo.click(render_correspond, cinputs, cout)
+        # Click image A to set the seed and re-run the match (once both images are loaded).
+        a.select(on_click, a, [cseed, cseed_readout]).then(render_correspond, cinputs, cout)
 
         # NOTE: a multi-image gr.Examples renders as a table whose image cells collapse to
         # nothing, so the pairs were invisible. Load each pair into A/B with a button instead.
-        gr.Markdown("**Example pairs** — load two views of the same animal, then hit **Match**:")
+        gr.Markdown("**Example pairs** — load two views of the same animal, then click image A:")
         with gr.Row():
             dog_btn = gr.Button("🐕 Dog pair")
             cat_btn = gr.Button("🐈 Cat pair")
