@@ -58,6 +58,26 @@ ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
 ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
              method="saliency", out=HERE / "method_saliency.png")
 
+# 3c-att) Attention-rollout (timm ViT): where is the [CLS] token looking? (overlaid on the cat)
+ll.attention("dino_vitb16", IMAGES / "cat_hires.jpg", layer=-1, img_size=448, overlay=True,
+             out=HERE / "attention_rollout.png")
+
+# 3c-vid) Multi-frame video: a synthetic horizontal "pan" across market.jpg -> filmstrip + GIF.
+def _video_filmstrip():
+    import tempfile
+    from PIL import Image
+    src = Image.open(IMAGES / "market.jpg").convert("RGB")
+    W, H = src.size
+    cw, n = int(W * 0.55), 6
+    with tempfile.TemporaryDirectory() as d:
+        for i in range(n):
+            x = round(i * (W - cw) / (n - 1))
+            src.crop((x, 0, x + cw, H)).save(Path(d) / f"frame_{i:02d}.jpg")
+        ll.video("dinov2_vitb14", d, layers=[-1], n_frames=n, method="pca", img_size=448,
+                 out=HERE / "video_filmstrip.png")
+
+_video_filmstrip()
+
 # 3c) Cross-image correspondence: seed the real cat's eye, find the matching part in a
 #     watercolor cat — DINOv2 features match the same semantic part across photo and illustration.
 ll.correspond("dinov2_vitb14", IMAGES / "cat_hires.jpg", IMAGES / "cat_cartoon.jpg",

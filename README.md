@@ -78,6 +78,16 @@ photo→illustration domain gap:
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/correspond.png" alt="cross-image correspondence" height="300"></p>
 
+**`attention(...)` — attention-rollout for a timm ViT.** Composing DINO ViT-B/16's self-attention
+(Abnar–Zuidema) shows the `[CLS]` token concentrating on the cat — overlaid, with a `[0, 1]` scale:
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/attention_rollout.png" alt="attention rollout" height="300"></p>
+
+**`video(...)` — per-frame feature maps over a clip, as a filmstrip** (+ an animated GIF). Here a
+synthetic pan across `market.jpg`, with DINOv2 last-layer PCA features tracking the scene:
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip.png" alt="video filmstrip" width="100%"></p>
+
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Install
 
 ```bash
