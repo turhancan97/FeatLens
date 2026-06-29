@@ -53,3 +53,31 @@ def test_correspond_render(tmp_path):
                         "examples/images/coffee.jpg", layer=-1, seed=(0.4, 0.5), topk=3,
                         pretrained=False, device="cpu", out=tmp_path / "corr.png")
     assert (tmp_path / "corr.png").exists()
+
+
+def _has_colorbar(fig):
+    # A colorbar adds an extra axes whose label matches; check for our cosine label.
+    return any(getattr(ax, "get_ylabel", lambda: "")() == "cosine similarity"
+               or getattr(ax, "get_xlabel", lambda: "")() == "cosine similarity"
+               for ax in fig.axes)
+
+
+def test_scales_present_only_where_meaningful():
+    import matplotlib.pyplot as plt
+
+    # cosine -> a [-1, 1] colorbar; pca/foreground -> none.
+    fig = FeatureGrid(["vit_tiny_patch16_224"], layers=[-1], pretrained=False,
+                      method="cosine", device="cpu").render("examples/images/cat.jpg")
+    assert _has_colorbar(fig)
+    plt.close(fig)
+
+    fig = FeatureGrid(["vit_tiny_patch16_224"], layers=[-1], pretrained=False,
+                      method="pca", device="cpu").render("examples/images/cat.jpg")
+    assert not _has_colorbar(fig)
+    plt.close(fig)
+
+    # kmeans -> a legend with one entry per cluster.
+    fig = FeatureGrid(["vit_tiny_patch16_224"], layers=[-1], pretrained=False,
+                      method="kmeans", k=4, device="cpu").render("examples/images/cat.jpg")
+    assert fig.legends and len(fig.legends[0].get_texts()) == 4
+    plt.close(fig)

@@ -98,6 +98,9 @@ ll.compare(["dino_vitb16", "mae_vitb16", "clip_large_openai"], "img.jpg", layer=
 
 # Full model x layer grid, overlaid on the image
 ll.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overlay=True, out="grid.png")
+
+# Batch a whole folder -> one figure per image (model loads once, reused across images)
+ll.batch("dino_vitb16", "photos/", "out/", layers=[2, 5, 8, 11])
 ```
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Quick start (CLI)
@@ -106,6 +109,9 @@ ll.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overl
 featlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \
     --images examples/images/cat.jpg --mode grid --out out/grid.png
 featlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
+
+# Batch: point --images at a folder (or glob) and --out-dir at an output folder
+featlens --models dino_vitb16 --layers 2 5 8 11 --images photos/ --out-dir out/
 ```
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Image size & resizing
@@ -169,8 +175,8 @@ Every method consumes the same dense feature stack, so it works on `grid` / `vis
 | `method` | shows | extra args |
 |----------|-------|------------|
 | `pca` (default) | robust PCA → RGB | `basis`, `remove_first_component` |
-| `cosine` | cosine similarity to a **seed** patch | `seed=(x, y)`, `colormap` |
-| `kmeans` | unsupervised k-means segmentation | `k` |
+| `cosine` | cosine similarity to a **seed** patch (with a [-1, 1] colorbar) | `seed=(x, y)`, `colormap` |
+| `kmeans` | unsupervised k-means segmentation (with a cluster legend) | `k` |
 | `foreground` | fg/bg mask (first PCA component) | — |
 
 ```python

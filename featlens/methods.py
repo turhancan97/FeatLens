@@ -169,3 +169,37 @@ def apply_colormap(values01: np.ndarray, name: str = "turbo") -> np.ndarray:
     values01 = np.clip(values01, 0.0, 1.0)
     cmap = _get_cmap(name)
     return cmap(values01)[..., :3]
+
+
+# ---- figure-level scales (colorbar / legend) ------------------------------
+def cosine_colorbar(fig, axes, colormap: str = "turbo", label: str = "cosine similarity"):
+    """Attach a shared [-1, 1] colorbar for ``cosine`` heatmaps to ``fig``.
+
+    ``axes`` is the axis (or list of axes) the bar should steal space from. Every cosine tile maps
+    ``(sim + 1) / 2`` through the same colormap, so one bar describes the whole figure.
+    """
+    import matplotlib.pyplot as plt
+    from matplotlib.cm import ScalarMappable
+    from matplotlib.colors import Normalize
+
+    sm = ScalarMappable(norm=Normalize(vmin=-1.0, vmax=1.0), cmap=_get_cmap(colormap))
+    sm.set_array([])
+    cbar = fig.colorbar(sm, ax=axes, fraction=0.025, pad=0.02, ticks=[-1.0, 0.0, 1.0])
+    cbar.set_label(label, fontsize=10)
+    return cbar
+
+
+def kmeans_legend(fig, k: int, colormap: str = "tab20"):
+    """Attach a legend of ``k`` cluster swatches to ``fig`` (matches :func:`labels_to_rgb`).
+
+    k-means runs independently per tile, so the colors are a per-tile key — not comparable across
+    tiles — but they still let a reader map a color to its cluster index within a tile.
+    """
+    from matplotlib.patches import Patch
+
+    cmap = _get_cmap(colormap)
+    k = max(1, int(k))
+    handles = [Patch(facecolor=cmap((i % cmap.N) / max(cmap.N - 1, 1)), label=f"cluster {i}")
+               for i in range(k)]
+    return fig.legend(handles=handles, loc="lower center", ncol=min(k, 8),
+                      fontsize=9, frameon=False, bbox_to_anchor=(0.5, -0.02))

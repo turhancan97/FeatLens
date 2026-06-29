@@ -6,7 +6,16 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-06-29
+
 ### Added
+- **Batch / directory mode** — new top-level `featlens.batch(models, images, out_dir, ...)` and a
+  `--out-dir` CLI flag: render **one figure per image** over a directory, glob, or list. The grid is
+  built once (weights load a single time, reused across images), and the opt-in feature cache still
+  applies. Works for `grid` / `visualize` / `compare` modes.
+- **Readable scales** for the methods whose colors carry meaning: `cosine` heatmaps now get a shared
+  **[-1, 1] colorbar** (also in `correspond()`'s similarity panel), and `kmeans` gets a
+  **cluster-color legend**. PCA keeps no colorbar (its RGB axes are arbitrary).
 - README/docs gallery: a **backbone comparison** panel — six ViT-B/16 models (DINO, DINOv3, MAE,
   SigLIP, supervised, Perception Encoder) rendered on the same image (`market.jpg`) at 1024px,
   last-layer PCA maps on a 64×64 grid, so the differences are purely the training objective.
@@ -88,7 +97,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.5...HEAD
+[0.2.5]: https://github.com/turhancan97/FeatLens/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/turhancan97/FeatLens/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/turhancan97/FeatLens/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/turhancan97/FeatLens/compare/v0.2.1...v0.2.2
