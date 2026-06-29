@@ -62,13 +62,15 @@ low-frequency, while SigLIP, supervised, and Perception Encoder encode much high
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_b16_market.png" alt="six ViT-B/16 backbones compared on one image" width="100%"></p>
 
 **Beyond PCA** — the same DINOv2 row, recolored by **cosine-similarity** to a seed patch,
-**k-means** segmentation, and a **foreground** mask (across layers 2 / 5 / 8 / 11):
+**k-means** segmentation, a **foreground** mask, and **saliency** (activation magnitude) — across
+layers 2 / 5 / 8 / 11:
 
 | Method | Across layers |
 |---|---|
 | `cosine` (seed on the cat) | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_cosine.png" width="520"> |
 | `kmeans` (k=6) | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_kmeans.png" width="520"> |
 | `foreground` | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_foreground.png" width="520"> |
+| `saliency` (activation magnitude) | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_saliency.png" width="520"> |
 
 **`correspond(...)` — seed a patch in image A, find the matches in image B.** Here the seed is on
 a real cat's eye; DINOv2 features match the *same semantic part* on a watercolor cat, across the

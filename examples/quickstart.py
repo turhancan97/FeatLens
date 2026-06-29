@@ -48,13 +48,15 @@ _compare_b16_market()
 ll.grid(["dino_vitb16", "dinov2_vitb14"], IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
         out=HERE / "grid_overlay.png", overlay=True)
 
-# 3b) v0.2 methods on one DINOv2 row across layers: cosine / k-means / foreground.
+# 3b) v0.2 methods on one DINOv2 row across layers: cosine / k-means / foreground / saliency.
 ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
              method="cosine", seed=(0.5, 0.45), out=HERE / "method_cosine.png")
 ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
              method="kmeans", k=6, out=HERE / "method_kmeans.png")
 ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
              method="foreground", out=HERE / "method_foreground.png")
+ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
+             method="saliency", out=HERE / "method_saliency.png")
 
 # 3c) Cross-image correspondence: seed the real cat's eye, find the matching part in a
 #     watercolor cat — DINOv2 features match the same semantic part across photo and illustration.
