@@ -21,6 +21,7 @@ import os
 import tempfile
 
 import gradio as gr
+from PIL import Image
 
 import featlens as ll
 from featlens.registry import BACKBONE_REGISTRY
@@ -105,13 +106,23 @@ def render_view(image, model, layer, method, k, seed):
 
 
 def on_click(image, evt: gr.SelectData):
-    """Image click -> (normalized seed, caption). Shared by both tabs."""
-    if image is None or evt is None:
-        seed = (0.5, 0.5)
-    else:
-        h, w = image.shape[:2]
-        x, y = evt.index  # (col, row) in pixels
-        seed = (round(x / max(w, 1), 3), round(y / max(h, 1), 3))
+    """Image click -> (normalized seed, caption). Shared by both tabs.
+
+    ``image`` is whatever the clicked component holds — a filepath (our input Images) or a numpy
+    array — and ``evt.index`` is the click in original-image pixels, so we just need (w, h).
+    """
+    seed = (0.5, 0.5)
+    if image is not None and evt is not None:
+        try:
+            if isinstance(image, str):
+                with Image.open(image) as im:
+                    w, h = im.size
+            else:  # numpy array (H, W, C)
+                h, w = image.shape[:2]
+            x, y = evt.index  # (col, row) in pixels
+            seed = (round(x / max(w, 1), 3), round(y / max(h, 1), 3))
+        except Exception:
+            seed = (0.5, 0.5)
     return seed, _seed_caption(seed)
 
 
@@ -161,10 +172,6 @@ with gr.Blocks(title="FeatLens") as demo:
 
         gr.Examples(examples=[[p] for p in EXAMPLE_IMAGES], inputs=img, label="Example images")
 
-        # A filepath Image needs a numpy copy to read click coords; load it for the select event.
-        img_np = gr.Image(visible=False, type="numpy")
-        img.change(lambda p: p, img, img_np)
-
         inputs = [img, model, layer, method, k, seed]
         method.change(on_method_change, method, [k, seed_hint, seed_readout])
         model.change(on_model_change, [model, layer], layer)
@@ -172,7 +179,7 @@ with gr.Blocks(title="FeatLens") as demo:
         for comp in (model, method, layer, k):
             comp.change(render_view, inputs, out)
         # Click the image to set the seed (cosine), then re-render.
-        img_np.select(on_click, img_np, [seed, seed_readout]).then(render_view, inputs, out)
+        img.select(on_click, img, [seed, seed_readout]).then(render_view, inputs, out)
 
     with gr.Tab("Correspondence"):
         cseed = gr.State((0.4, 0.5))  # set by clicking image A
@@ -187,15 +194,11 @@ with gr.Blocks(title="FeatLens") as demo:
         cgo = gr.Button("Match", variant="primary")
         cout = gr.Image(label="Correspondence")
 
-        # Hidden numpy copy of A so the click event can read pixel coords (same trick as above).
-        a_np = gr.Image(visible=False, type="numpy")
-        a.change(lambda p: p, a, a_np)
-
         cinputs = [a, b, cmodel, clayer, cseed, ctopk]
         cmodel.change(on_model_change, [cmodel, clayer], clayer)
         cgo.click(render_correspond, cinputs, cout)
         # Click image A to set the seed and re-run the match (once both images are loaded).
-        a_np.select(on_click, a_np, [cseed, cseed_readout]).then(render_correspond, cinputs, cout)
+        a.select(on_click, a, [cseed, cseed_readout]).then(render_correspond, cinputs, cout)
 
         # NOTE: a multi-image gr.Examples renders as a table whose image cells collapse to
         # nothing, so the pairs were invisible. Load each pair into A/B with a button instead.
