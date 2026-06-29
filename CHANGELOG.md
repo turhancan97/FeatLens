@@ -6,6 +6,10 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+- Demo: the seed is now set by **clicking the image** (both tabs) instead of typing x/y
+  numbers; the Correspondence tab re-runs the match automatically on click.
+
 ## [0.2.1] - 2026-06-28
 
 ### Added
