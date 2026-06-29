@@ -130,6 +130,37 @@ class FeatureExtractor(nn.Module):
         with torch.no_grad():
             return self.model(inp, **kwargs)
 
+    def extract_clip(self, clip: torch.Tensor, n_temporal: int) -> torch.Tensor:
+        """Spatiotemporal extraction for a temporal model: ``[B,C,T,H,W] -> [B, L, T', D, h, w]``.
+
+        Runs the clip through the hooked model (no single-frame unsqueeze) and splits each layer's
+        token sequence into ``n_temporal`` per-time-step grids via
+        :func:`featlens.tokens.tokens_to_spatiotemporal`. Used by :func:`featlens.video` for V-JEPA.
+        """
+        from .tokens import tokens_to_spatiotemporal
+
+        if self.lm.mode != "hook":
+            raise NotImplementedError("extract_clip requires a hook-mode (V-JEPA) model.")
+        B, C, T, H, W = clip.shape
+        h_feat, w_feat = H // self.patch_size, W // self.patch_size
+        self._features.clear()
+        prev = getattr(self.model, "out_layers", "__missing__")
+        if prev != "__missing__":
+            self.model.out_layers = None
+        try:
+            with torch.no_grad():
+                self.model(clip)
+        finally:
+            if prev != "__missing__":
+                self.model.out_layers = prev
+        maps = []
+        for idx in self.layers:
+            if idx not in self._features:
+                raise RuntimeError(f"No hooked feature captured for layer {idx}.")
+            st = tokens_to_spatiotemporal(self._features[idx], B, n_temporal, h_feat, w_feat, idx)
+            maps.append(st)  # [T', B, D, h, w]
+        return torch.stack(maps, dim=1).permute(2, 1, 0, 3, 4, 5).contiguous()  # [B, L, T', D, h, w]
+
     def _extract_via_hooks(self, images, h_feat, w_feat) -> List[torch.Tensor]:
         self._features.clear()
         # V-JEPA 2.1 encoders expose an out_layers shortcut that conflicts with arbitrary

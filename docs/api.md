@@ -15,6 +15,10 @@ thin wrappers over `FeatureGrid`; `FeatureExtractor` is the per-model engine.
 
 ::: featlens.batch
 
+::: featlens.video
+
+::: featlens.attention
+
 ## FeatureGrid
 
 ::: featlens.FeatureGrid

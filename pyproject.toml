@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "featlens"
-version = "0.2.6"
+version = "0.3.0"
 description = "Model-agnostic feature-map visualization: PCA, cosine-similarity, k-means and foreground maps from any vision model and any layer."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -33,6 +33,7 @@ hf = ["transformers>=4.30"]
 clip = ["open_clip_torch>=2.20"]
 all = ["timm>=0.9", "transformers>=4.30", "open_clip_torch>=2.20"]
 demo = ["gradio>=4.0"]
+video = ["imageio>=2.30", "imageio-ffmpeg>=0.4"]
 docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.24"]
 
 [project.scripts]

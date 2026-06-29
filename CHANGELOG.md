@@ -6,6 +6,23 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-29
+
+### Added
+- **Multi-frame video** — new top-level `featlens.video(model, src, ...)` and `--mode video`: render
+  per-frame feature maps over a clip as a **filmstrip** (frames × layers) plus an animated **GIF**.
+  `src` is a video file (needs the new `featlens[video]` extra) or a directory / glob / list of
+  frames. Temporal models (V-JEPA) feed the clip once and split the spatiotemporal tokens into
+  per-time-step grids (`tokens_to_spatiotemporal`); any 2D model runs per-frame.
+- **Attention-rollout** — new `featlens.attention(model, image, ...)` and `--mode attention`:
+  Abnar–Zuidema rollout of a timm ViT's self-attention into a `[0, 1]` "where is [CLS] looking"
+  heatmap (with overlay). Bounded to timm ViT-family models.
+- **More models** in the registry: `eva02_small/base/large_patch14`, `samvit_base`,
+  `beit_base_patch16`.
+- **Batch montage** — `batch(..., montage="sheet.png")` tiles the per-image outputs into one contact
+  sheet. **Raw feature export** — `return_data=True, include_features=True` adds the raw
+  `[R, B, L, D, h, w]` feature stack to the result dict.
+
 ## [0.2.6] - 2026-06-29
 
 ### Added
@@ -111,7 +128,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.6...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/turhancan97/FeatLens/compare/v0.2.6...v0.3.0
 [0.2.6]: https://github.com/turhancan97/FeatLens/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/turhancan97/FeatLens/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/turhancan97/FeatLens/compare/v0.2.3...v0.2.4

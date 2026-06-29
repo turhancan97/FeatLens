@@ -22,10 +22,13 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--models", nargs="+", help="Model specs (friendly name, timm id, or backend:ident).")
     p.add_argument("--layers", nargs="+", type=int, help="Block indices (negatives allowed).")
     p.add_argument("--images", nargs="+", required=True, help="One or more image paths.")
-    p.add_argument("--mode", choices=["grid", "visualize", "compare", "correspond"], default="grid",
+    p.add_argument("--mode",
+                   choices=["grid", "visualize", "compare", "correspond", "video", "attention"],
+                   default="grid",
                    help="grid = models x layers; visualize = one model, shared basis; "
                         "compare = many models, one layer; correspond = seed-patch matching "
-                        "between --images[0] and --image-b.")
+                        "between --images[0] and --image-b; video = per-frame maps over a "
+                        "clip/folder; attention = ViT attention-rollout heatmap.")
     p.add_argument("--layer", type=int, default=-1, help="Single layer for --mode compare/correspond.")
     p.add_argument("--method", choices=["pca", "cosine", "kmeans", "foreground", "saliency"],
                    default="pca", help="Visualization method (default: pca).")
@@ -38,6 +41,8 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--topk", type=int, default=1, help="Top matches to mark for --mode correspond.")
     p.add_argument("--mutual", action="store_true",
                    help="--mode correspond: keep only cycle-consistent (mutual-NN) matches.")
+    p.add_argument("--n-frames", type=int, default=16,
+                   help="--mode video: number of frames to sample from the clip/folder.")
     p.add_argument("--out", default="featlens_out.png", help="Output PNG path.")
     p.add_argument("--out-dir", default=None,
                    help="Batch mode: render one figure per input image into this directory "
@@ -89,6 +94,23 @@ def main(argv: List[str] = None) -> None:
             seed=tuple(args.seed) if args.seed else (0.5, 0.5), topk=args.topk,
             mutual=args.mutual, img_size=img_size, resize_mode=resize_mode, pretrained=pretrained,
             device=args.device, colormap=args.colormap, out=args.out)
+        print(f"Saved: {Path(out).resolve()}")
+        return
+
+    if args.mode == "attention":
+        out = ll.attention(models[0], args.images[0], layer=args.layer, img_size=img_size,
+                           colormap=args.colormap, overlay=args.overlay,
+                           overlay_alpha=args.overlay_alpha, pretrained=pretrained,
+                           device=args.device, resize_mode=resize_mode, out=args.out)
+        print(f"Saved: {Path(out).resolve()}")
+        return
+
+    if args.mode == "video":
+        src = args.images[0] if len(args.images) == 1 else args.images
+        out = ll.video(models[0], src, layers=layers, n_frames=args.n_frames,
+                       method=args.method, img_size=img_size, colormap=args.colormap, k=args.k,
+                       seed=tuple(args.seed) if args.seed else None, pretrained=pretrained,
+                       device=args.device, resize_mode=resize_mode, out=args.out)
         print(f"Saved: {Path(out).resolve()}")
         return
 

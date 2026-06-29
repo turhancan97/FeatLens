@@ -56,3 +56,39 @@ def tokens_to_grid(
 
     grid = token_tensor.permute(0, 2, 1).reshape(batch, embed_dim, h_feat, w_feat)
     return grid, cls_token
+
+
+def tokens_to_spatiotemporal(
+    token_tensor: torch.Tensor,
+    batch: int,
+    n_temporal: int,
+    h_feat: int,
+    w_feat: int,
+    layer_idx: int = 0,
+) -> torch.Tensor:
+    """Split a spatiotemporal token sequence into per-time-step grids.
+
+    A temporal model (V-JEPA) emits ``N = n_temporal * h * w (+ prefix)`` tokens for a clip.
+    ``tokens_to_grid`` would wrongly strip the extra time steps as "prefix"; this splits them
+    instead, returning ``[n_temporal, B, D, h, w]`` (one dense grid per temporal token).
+    """
+    if token_tensor.dim() != 3:
+        raise ValueError(
+            f"Layer {layer_idx}: spatiotemporal reshape expects [B, N, D], got "
+            f"{list(token_tensor.shape)}."
+        )
+    seq_len = int(token_tensor.shape[1])
+    embed_dim = int(token_tensor.shape[2])
+    per_step = h_feat * w_feat
+    expected = n_temporal * per_step
+    num_prefix = seq_len - expected
+    if num_prefix < 0:
+        raise ValueError(
+            f"Layer {layer_idx}: sequence length {seq_len} < expected {expected} "
+            f"(n_temporal={n_temporal}, {h_feat}x{w_feat}). Check num_frames / tubelet_size."
+        )
+    if num_prefix > 0:
+        token_tensor = token_tensor[:, num_prefix:, :]
+    # [B, T*h*w, D] -> [T, B, D, h, w]
+    grids = token_tensor.reshape(batch, n_temporal, h_feat, w_feat, embed_dim)
+    return grids.permute(1, 0, 4, 2, 3).contiguous()
