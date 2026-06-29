@@ -11,12 +11,14 @@ import featlens as ll
 
 HERE = Path(__file__).parent
 IMAGES = HERE / "images"
-NAMES = ["astronaut", "cat", "coffee"]
 
-# 1) Per-image feature maps: one DINO ViT-B/16 row per image, across layers (shared basis).
-for name in NAMES:
-    ll.visualize("dino_vitb16", IMAGES / f"{name}.jpg", layers=[2, 5, 8, 11],
-                 out=HERE / f"feat_{name}.png")
+# 1) Per-image feature maps (the README hero rows). A *patch-8* DINO ViT-S at 768px gives a fine
+#    96x96 feature grid, so thin structures (whiskers, feather barbs, individual fruit) stay crisp.
+#    CPU-friendly (~30s/image); raise img_size for an even finer grid if you have the compute.
+HERO_NAMES = ["peacock", "cat_hires", "market"]
+for name in HERO_NAMES:
+    ll.visualize("timm:vit_small_patch8_224.dino", IMAGES / f"{name}.jpg", layers=[2, 5, 8, 11],
+                 img_size=768, out=HERE / f"feat_{name}.png")
 
 # 2) Compare models at the final layer (per-tile basis).
 ll.compare(["dino_vitb16", "dinov2_vitb14", "clip_large_openai"], IMAGES / "cat.jpg",

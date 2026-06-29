@@ -6,6 +6,12 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+- Refreshed the README/docs showcase: the per-image hero rows are now rendered with a *patch-8*
+  backbone (`vit_small_patch8_224.dino`) at 768 px — a fine 96×96 feature grid that resolves thin
+  structures (whiskers, feather barbs, individual fruit). New high-res CC-licensed example images
+  (peacock, cat, market) with attribution in `examples/images/CREDITS.md`.
+
 ## [0.2.3] - 2026-06-29
 
 ### Changed
