@@ -58,3 +58,18 @@ def test_grid_render(tmp_path):
         "examples/images/cat.jpg", out_path=tmp_path / "g.png"
     )
     assert (tmp_path / "g.png").exists()
+
+
+import pytest
+
+
+@pytest.mark.parametrize("name,size", [
+    ("eva02_small_patch14", 224),   # EVA-02 architecture
+    ("samvit_base", 224),           # SAM ViT-det
+    ("beit_base_patch16", 224),     # BEiT
+])
+def test_new_registry_models_load_and_forward(name, size):
+    # New v0.3 registry entries resolve through the timm ViT hook path (random weights, no download).
+    ex = FeatureExtractor(name, layers=[-1], img_size=size, pretrained=False)
+    out = ex(torch.randn(1, 3, size, size))
+    assert out.dim() == 5 and out.shape[0] == 1  # [B, L, D, h, w]

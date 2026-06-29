@@ -22,12 +22,15 @@ from .extractor import FeatureExtractor
 from .grid import FeatureGrid
 from .correspond import correspond
 from .batch import batch
+from .video import video
+from .attention import attention
 
-__version__ = "0.2.6"
-__all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond", "batch"]
+__version__ = "0.3.0"
+__all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond",
+           "batch", "video", "attention"]
 
 
-_RENDER_KEYS = ("overlay", "overlay_alpha", "figscale", "return_data")
+_RENDER_KEYS = ("overlay", "overlay_alpha", "figscale", "return_data", "include_features")
 
 
 def _split_kwargs(kwargs):

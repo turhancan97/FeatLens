@@ -200,6 +200,7 @@ class FeatureGrid:
         overlay_alpha: float = 0.45,
         figscale: float = 2.6,
         return_data: bool = False,
+        include_features: bool = False,
     ):
         from PIL import Image
 
@@ -212,9 +213,12 @@ class FeatureGrid:
         n_cols = len(self.layers)
         tiles: List[List[np.ndarray]] = [[None] * n_cols for _ in range(n_rows)]
         scalars: List[List[Optional[np.ndarray]]] = [[None] * n_cols for _ in range(n_rows)]
+        feature_stacks: List[np.ndarray] = []
 
         for r, (label, ex) in enumerate(self._models):
             feats = self._features_for_model(ex, pils, img_bytes)  # [B, L, D, h, w]
+            if include_features:
+                feature_stacks.append(feats.cpu().numpy())
             shared = None
             if self.method == "pca" and self.basis == "shared_per_model":
                 allfeat = rearrange(feats, "n l d h w -> (n l h w) d")
@@ -240,7 +244,7 @@ class FeatureGrid:
         composed = self._compose(tiles, row_labels, col_labels, out_path, figscale)
         if not return_data:
             return composed
-        return {
+        result = {
             "tiles": _maybe_stack(tiles),
             "scalars": None if scalars[0][0] is None else _maybe_stack(scalars),
             "row_labels": row_labels,
@@ -248,6 +252,11 @@ class FeatureGrid:
             "path": composed if out_path else None,
             "fig": None if out_path else composed,
         }
+        if include_features:
+            # One [B, L, D, h, w] array per model; stack to [R, ...] when models share a shape.
+            uniform = len({f.shape for f in feature_stacks}) == 1
+            result["features"] = np.stack(feature_stacks) if uniform else feature_stacks
+        return result
 
     def _overlay_source(self, ex: FeatureExtractor, pils) -> np.ndarray:
         """Vertically-stacked denormalized source images at the tile resolution."""

@@ -28,6 +28,8 @@ EXPECTED_DEPTH = {
     "perception_encoder_vitl14": 24, "perception_encoder_vitb16": 12,
     "perception_encoder_vits16": 12,
     "vjepa2_vitl16": 24, "vjepa2_1_vitb16": 12, "vjepa2_1_vitl16": 24,
+    "eva02_small_patch14": 12, "eva02_base_patch14": 12, "eva02_large_patch14": 24,
+    "samvit_base": 12, "beit_base_patch16": 12,
 }
 
 

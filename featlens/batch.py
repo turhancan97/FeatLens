@@ -57,6 +57,7 @@ def batch(
     overlay: bool = False,
     overlay_alpha: float = 0.45,
     figscale: float = 2.6,
+    montage: Optional[PathLike] = None,
     **kwargs,
 ) -> List[str]:
     """Render one figure per image into ``out_dir`` and return the written paths.
@@ -108,4 +109,33 @@ def batch(
         written.append(str(out_path))
         print(f"[{i}/{n}] wrote {out_path}")
 
+    if montage:
+        _make_montage(written, [p.stem for p in paths], montage)
+        print(f"wrote montage {montage}")
+
     return written
+
+
+def _make_montage(image_paths: Sequence[str], titles: Sequence[str], out: PathLike) -> str:
+    """Tile the rendered per-image PNGs into one contact sheet (≈square grid), titled by stem."""
+    import math
+
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    n = len(image_paths)
+    ncols = max(1, math.ceil(math.sqrt(n)))
+    nrows = math.ceil(n / ncols)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(3.2 * ncols, 3.4 * nrows), squeeze=False)
+    for ax in axes.ravel():
+        ax.axis("off")
+    for ax, path, title in zip(axes.ravel(), image_paths, titles):
+        ax.imshow(Image.open(path))
+        ax.set_title(title, fontsize=10)
+    fig.tight_layout()
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return str(out)

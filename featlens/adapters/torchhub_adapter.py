@@ -131,4 +131,5 @@ def load(
         hook_module_fn=hook_module,
         uses_temporal=friendly in _V21_TYPES,
         name=identifier,
+        extra={"num_frames": num_frames, "tubelet_size": tubelet_size},
     )

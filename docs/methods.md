@@ -67,6 +67,35 @@ after its source image (`out/<stem>.png`). On the CLI, pass `--out-dir`:
 featlens --models dino_vitb16 --layers 2 5 8 11 --images photos/ --out-dir out/
 ```
 
+Pass `montage="sheet.png"` to also tile the per-image outputs into one contact sheet, and
+`return_data=True, include_features=True` to get the raw `[R, B, L, D, h, w]` feature stack back.
+
+## Multi-frame video
+
+Render per-frame feature maps over a clip as a **filmstrip** (frames × layers) and an animated
+**GIF**. `src` is a video file (needs the `featlens[video]` extra) or a directory / glob / list of
+frames:
+
+```python
+fl.video("dinov2_vitb14", "clip.mp4", layers=[5, 11], n_frames=16, out="strip.png")  # -> strip.png + strip.gif
+fl.video("dino_vitb16", "frames/", method="cosine", seed=(0.5, 0.5), n_frames=12)
+```
+
+Temporal models (V-JEPA) feed the whole clip once and split the spatiotemporal tokens into
+per-time-step grids; any other model runs each frame independently.
+
+## Attention-rollout
+
+For a **timm ViT**, compose the per-block self-attention (Abnar & Zuidema rollout) into a
+"where is the `[CLS]` token looking" heatmap:
+
+```python
+fl.attention("dino_vitb16", "img.jpg", layer=-1, overlay=True, out="attn.png")
+```
+
+`head` picks the head reduction (`mean`/`max`/`min`), `discard_ratio` drops the weakest attentions
+before rollout. Non-ViT / temporal models raise a clear error.
+
 ## Cross-image correspondence
 
 Seed a patch in image A and find the matching patches in image B:

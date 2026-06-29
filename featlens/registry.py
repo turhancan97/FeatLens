@@ -39,6 +39,11 @@ BACKBONE_REGISTRY = {
     "perception_encoder_vitl14": "vit_pe_spatial_large_patch14_448.fb",
     "perception_encoder_vitb16": "vit_pe_spatial_base_patch16_512.fb",
     "perception_encoder_vits16": "vit_pe_spatial_small_patch16_512.fb",
+    "eva02_small_patch14": "eva02_small_patch14_224.mim_in22k",
+    "eva02_base_patch14": "eva02_base_patch14_224.mim_in22k",
+    "eva02_large_patch14": "eva02_large_patch14_224.mim_in22k",
+    "samvit_base": "samvit_base_patch16.sa1b",
+    "beit_base_patch16": "beit_base_patch16_224.in22k_ft_in22k_in1k",
     # V-JEPA names (routed to torch.hub, not timm).
     "vjepa2_vitl16": "vjepa2_vit_large",
     "vjepa2_1_vitb16": "vjepa2_1_vit_base_384",

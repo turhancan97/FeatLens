@@ -82,7 +82,7 @@ photo→illustration domain gap:
 
 ```bash
 pip install -e ".[timm]"          # timm backend (DINO, CLIP, SigLIP, DeiT, ...)
-# extras: [hf] transformers · [clip] open_clip · [all]
+# extras: [hf] transformers · [clip] open_clip · [video] read .mp4 clips · [all]
 ```
 
 Install PyTorch for your platform first (https://pytorch.org).
@@ -101,8 +101,14 @@ ll.compare(["dino_vitb16", "mae_vitb16", "clip_large_openai"], "img.jpg", layer=
 # Full model x layer grid, overlaid on the image
 ll.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overlay=True, out="grid.png")
 
-# Batch a whole folder -> one figure per image (model loads once, reused across images)
-ll.batch("dino_vitb16", "photos/", "out/", layers=[2, 5, 8, 11])
+# Batch a whole folder -> one figure per image (+ a contact-sheet montage)
+ll.batch("dino_vitb16", "photos/", "out/", layers=[2, 5, 8, 11], montage="sheet.png")
+
+# Multi-frame video -> a filmstrip (frames x layers) + an animated GIF
+ll.video("dinov2_vitb14", "clip.mp4", layers=[5, 11], n_frames=16, out="strip.png")  # needs featlens[video]
+
+# Attention-rollout: where is the [CLS] token looking? (timm ViTs)
+ll.attention("dino_vitb16", "img.jpg", layer=-1, overlay=True, out="attn.png")
 ```
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Quick start (CLI)
@@ -114,6 +120,10 @@ featlens --config configs/example.yaml --images examples/images/cat.jpg --out ou
 
 # Batch: point --images at a folder (or glob) and --out-dir at an output folder
 featlens --models dino_vitb16 --layers 2 5 8 11 --images photos/ --out-dir out/
+
+# Video (filmstrip + GIF) and attention-rollout
+featlens --mode video --models dinov2_vitb14 --images clip.mp4 --n-frames 16 --out strip.png
+featlens --mode attention --models dino_vitb16 --images cat.jpg --overlay --out attn.png
 ```
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Image size & resizing
@@ -156,7 +166,7 @@ model input.)
 | **Your own model** | `custom_adapter.load(model, feature_fn=…)` | — |
 
 Friendly names (see `featlens/registry.py`) cover DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT,
-Perception Encoder and V-JEPA; any other timm id works directly.
+EVA-02, BEiT, SAM, Perception Encoder and V-JEPA; any other timm id works directly.
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Layers
 
