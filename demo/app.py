@@ -30,7 +30,7 @@ MODELS = list(BACKBONE_REGISTRY.keys())
 # Default to a small ViT-S backbone so the very first render is a quick download.
 _PREFERRED = ["dinov2_vits14", "dino_vits16", "dinov3_vits16"]
 DEFAULT_MODEL = next((m for m in _PREFERRED if m in MODELS), MODELS[0])
-METHODS = ["pca", "cosine", "kmeans", "foreground"]
+METHODS = ["pca", "cosine", "kmeans", "foreground", "saliency"]
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 

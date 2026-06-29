@@ -11,6 +11,7 @@ heatmap down the network just like the PCA grid.
 | `cosine` | cosine similarity of every patch to a **seed** patch | `seed=(x, y)`, `colormap` |
 | `kmeans` | unsupervised k-means of the patches → segmentation | `k` |
 | `foreground` | fg/bg mask from the first robust-PCA component | — |
+| `saliency` | per-patch activation magnitude (feature L2 norm) → "where the model fires" | `colormap` |
 
 ```python
 import featlens as fl
@@ -21,16 +22,32 @@ fl.visualize("dino_vitb16", "img.jpg", layers=[2, 5, 8, 11], method="cosine", se
 # k-means segmentation (8 clusters) at the last layer, comparing two models
 fl.compare(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layer=-1, method="kmeans", k=8)
 
-# Foreground mask
+# Foreground mask, and activation-magnitude saliency
 fl.grid(["dinov2_vitb14"], "img.jpg", layers=[-1], method="foreground")
+fl.visualize("dinov2_vitb14", "img.jpg", layers=[2, 5, 8, 11], method="saliency")
 ```
 
 `seed` is **normalized image coordinates** `(x, y) ∈ [0, 1]`, so it is independent of model and
 resolution. The seed patch is marked white in the heatmap.
 
-`cosine` heatmaps carry a shared **[-1, 1] colorbar** so the similarity scale is readable, and
-`kmeans` adds a **cluster-color legend**. (k-means runs per tile, so its colors are a per-tile key,
-not comparable across tiles.) `pca` has no colorbar — its RGB axes are arbitrary.
+`cosine` heatmaps carry a shared **[-1, 1] colorbar** and `saliency` a **[0, 1] colorbar** so the
+scale is readable, and `kmeans` adds a **cluster-color legend**. (k-means runs per tile, so its
+colors are a per-tile key, not comparable across tiles.) `pca` / `foreground` have no colorbar.
+
+## Return the arrays — `return_data=True`
+
+By default the renderers write a PNG (and return its path). Pass `return_data=True` to also get the
+arrays back — no PNG round-trip:
+
+```python
+res = fl.visualize("dino_vitb16", "img.jpg", layers=[2, 5, 8, 11], method="cosine", return_data=True)
+res["tiles"]    # [R, C, H, W, 3] rendered RGB
+res["scalars"]  # [R, C, h, w] cosine similarity in [-1, 1] (None for pca / kmeans / foreground)
+res["row_labels"], res["col_labels"], res["path"], res["fig"]
+```
+
+`correspond(..., return_data=True)` returns `similarity` (one `[h, w]` map per seed), `seeds`,
+`matches`, and `mutual` flags.
 
 ## Batch / directory mode
 
@@ -56,14 +73,19 @@ Seed a patch in image A and find the matching patches in image B:
 
 ```python
 fl.correspond("dino_vitb16", "a.jpg", "b.jpg", layer=-1, seed=(0.4, 0.5), topk=3, out="corr.png")
+
+# Multiple seeds (each gets its own color) + mutual-NN filtering of spurious matches
+fl.correspond("dino_vitb16", "a.jpg", "b.jpg", seed=[(0.4, 0.5), (0.6, 0.3)], mutual=True, out="corr.png")
 ```
 
-Left shows image A with the seed marked; right shows image B as a cosine-similarity heatmap with
-the top-`topk` matches circled.
+Three panels: image A with the seed(s) marked, the original image B with the top-`topk` matches
+circled and arrows from each seed, and image B's cosine-similarity heatmap. **`seed`** accepts a
+single `(x, y)` or a **list**. **`mutual=True`** keeps only **cycle-consistent** matches — a match
+patch in B whose own nearest neighbour back in A is the seed patch — which filters out spurious hits.
 
 ```bash
 featlens --mode correspond --models dino_vitb16 --images a.jpg --image-b b.jpg \
-    --seed 0.4 0.5 --topk 3 --out corr.png
+    --seed 0.4 0.5 --topk 3 --mutual --out corr.png
 ```
 
 ## Caching

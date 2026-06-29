@@ -178,11 +178,18 @@ Every method consumes the same dense feature stack, so it works on `grid` / `vis
 | `cosine` | cosine similarity to a **seed** patch (with a [-1, 1] colorbar) | `seed=(x, y)`, `colormap` |
 | `kmeans` | unsupervised k-means segmentation (with a cluster legend) | `k` |
 | `foreground` | fg/bg mask (first PCA component) | — |
+| `saliency` | per-patch activation magnitude (with a [0, 1] colorbar) | `colormap` |
 
 ```python
 fl.visualize("dino_vitb16", "img.jpg", layers=[2, 5, 8, 11], method="cosine", seed=(0.5, 0.5))
 fl.compare(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layer=-1, method="kmeans", k=8)
-fl.correspond("dino_vitb16", "a.jpg", "b.jpg", seed=(0.4, 0.5), topk=3, out="corr.png")  # cross-image
+
+# Cross-image correspondence: multiple seeds, and mutual-NN to drop spurious matches
+fl.correspond("dino_vitb16", "a.jpg", "b.jpg", seed=[(0.4, 0.5), (0.6, 0.3)], mutual=True, out="corr.png")
+
+# Get the arrays back (no PNG round-trip): RGB tiles + the underlying scalar field
+res = fl.visualize("dino_vitb16", "img.jpg", layers=[2, 5, 8, 11], method="cosine", return_data=True)
+res["tiles"]    # [R, C, H, W, 3] rendered RGB     res["scalars"]  # [R, C, h, w] cosine sim in [-1, 1]
 ```
 
 `seed` is **normalized** image coords `(x, y) ∈ [0, 1]` (resolution/model independent). Pass

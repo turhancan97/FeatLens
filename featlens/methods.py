@@ -22,7 +22,7 @@ import torch
 
 from .pca import get_pca_map, get_robust_pca
 
-METHODS = ("pca", "cosine", "kmeans", "foreground")
+METHODS = ("pca", "cosine", "kmeans", "foreground", "saliency")
 
 
 def _get_cmap(name: str):
@@ -70,7 +70,23 @@ def colorize(
         return labels_to_rgb(labels, k)
     if method == "foreground":
         return foreground_mask(fmap, outlier_threshold=outlier_threshold)
+    if method == "saliency":
+        return apply_colormap(saliency_map(fmap), colormap)
     raise ValueError(f"Unknown method '{method}'. Choose from {METHODS}.")
+
+
+def method_scalar(fmap: torch.Tensor, method: str, *,
+                  seed: Optional[Sequence[float]] = None) -> Optional[np.ndarray]:
+    """The scalar field underlying a method (``[h, w]``), or ``None`` if it has none.
+
+    ``cosine`` → similarity to the seed in ``[-1, 1]``; ``saliency`` → normalized magnitude in
+    ``[0, 1]``. ``pca`` / ``kmeans`` / ``foreground`` have no single scalar field, so return ``None``.
+    """
+    if method == "cosine":
+        return cosine_similarity_map(fmap, seed if seed is not None else (0.5, 0.5))
+    if method == "saliency":
+        return saliency_map(fmap)
+    return None
 
 
 # ---- cosine similarity ----------------------------------------------------
@@ -161,6 +177,20 @@ def foreground_mask(fmap: torch.Tensor, outlier_threshold: float = 2.0,
     return rgb
 
 
+# ---- saliency (activation magnitude) -------------------------------------
+def saliency_map(fmap: torch.Tensor) -> np.ndarray:
+    """Per-patch feature **L2 norm** of ``[h, w, D]``, min-max normalized to ``[0, 1]`` (``[h, w]``).
+
+    A quick "where does the model put energy" view — high where patch activations are strong.
+    """
+    if fmap.dim() == 4:
+        fmap = fmap[0]
+    h, w, d = fmap.shape
+    mag = fmap.reshape(h * w, d).float().norm(dim=1).reshape(h, w)
+    mag = (mag - mag.min()) / (mag.max() - mag.min() + 1e-8)
+    return mag.cpu().numpy()
+
+
 # ---- shared colormap helper ----------------------------------------------
 def apply_colormap(values01: np.ndarray, name: str = "turbo") -> np.ndarray:
     """Map scalar values in [0, 1] (``[h, w]`` numpy/torch) to RGB ``[h, w, 3]``."""
@@ -172,21 +202,33 @@ def apply_colormap(values01: np.ndarray, name: str = "turbo") -> np.ndarray:
 
 
 # ---- figure-level scales (colorbar / legend) ------------------------------
-def cosine_colorbar(fig, axes, colormap: str = "turbo", label: str = "cosine similarity"):
-    """Attach a shared [-1, 1] colorbar for ``cosine`` heatmaps to ``fig``.
+def scalar_colorbar(fig, axes, colormap="turbo", *, vmin, vmax, label, ticks=None):
+    """Attach a shared ``[vmin, vmax]`` colorbar to ``fig``.
 
-    ``axes`` is the axis (or list of axes) the bar should steal space from. Every cosine tile maps
-    ``(sim + 1) / 2`` through the same colormap, so one bar describes the whole figure.
+    ``axes`` is the axis (or list of axes) the bar should steal space from. Tiles produced by a
+    scalar method map the same value range through ``colormap``, so one bar describes the figure.
     """
-    import matplotlib.pyplot as plt
     from matplotlib.cm import ScalarMappable
     from matplotlib.colors import Normalize
 
-    sm = ScalarMappable(norm=Normalize(vmin=-1.0, vmax=1.0), cmap=_get_cmap(colormap))
+    sm = ScalarMappable(norm=Normalize(vmin=vmin, vmax=vmax), cmap=_get_cmap(colormap))
     sm.set_array([])
-    cbar = fig.colorbar(sm, ax=axes, fraction=0.025, pad=0.02, ticks=[-1.0, 0.0, 1.0])
+    cbar = fig.colorbar(sm, ax=axes, fraction=0.025, pad=0.02,
+                        ticks=ticks if ticks is not None else [vmin, (vmin + vmax) / 2, vmax])
     cbar.set_label(label, fontsize=10)
     return cbar
+
+
+def cosine_colorbar(fig, axes, colormap: str = "turbo"):
+    """Shared [-1, 1] colorbar for ``cosine`` heatmaps."""
+    return scalar_colorbar(fig, axes, colormap, vmin=-1.0, vmax=1.0,
+                           label="cosine similarity", ticks=[-1.0, 0.0, 1.0])
+
+
+def saliency_colorbar(fig, axes, colormap: str = "turbo"):
+    """Shared [0, 1] colorbar for ``saliency`` (normalized activation magnitude)."""
+    return scalar_colorbar(fig, axes, colormap, vmin=0.0, vmax=1.0,
+                           label="activation (norm.)", ticks=[0.0, 0.5, 1.0])
 
 
 def kmeans_legend(fig, k: int, colormap: str = "tab20"):

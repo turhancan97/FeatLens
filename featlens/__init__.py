@@ -23,11 +23,11 @@ from .grid import FeatureGrid
 from .correspond import correspond
 from .batch import batch
 
-__version__ = "0.2.5"
+__version__ = "0.2.6"
 __all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond", "batch"]
 
 
-_RENDER_KEYS = ("overlay", "overlay_alpha", "figscale")
+_RENDER_KEYS = ("overlay", "overlay_alpha", "figscale", "return_data")
 
 
 def _split_kwargs(kwargs):

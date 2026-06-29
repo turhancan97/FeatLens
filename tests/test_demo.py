@@ -44,7 +44,7 @@ def app(monkeypatch):
 def test_demo_imports_and_builds(app):
     assert app.MODELS, "registry produced no models"
     assert app.DEFAULT_MODEL in app.MODELS
-    assert app.METHODS == ["pca", "cosine", "kmeans", "foreground"]
+    assert app.METHODS == ["pca", "cosine", "kmeans", "foreground", "saliency"]
 
 
 def test_depth_for_every_registry_model(app):
