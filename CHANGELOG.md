@@ -6,6 +6,14 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-06-29
+
+### Changed
+- `correspond()` is now a **three-panel** view: source (seed), the **original** target image
+  with the matches circled and arrows landing on them, and a separate cosine-similarity heatmap
+  with the same matches circled. Each match has its own color, shared between the target and
+  heatmap panels so they line up at a glance.
+
 ## [0.2.2] - 2026-06-29
 
 ### Added
@@ -64,7 +72,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/turhancan97/FeatLens/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/turhancan97/FeatLens/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/turhancan97/FeatLens/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/turhancan97/FeatLens/compare/v0.1.0...v0.2.0
