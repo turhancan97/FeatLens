@@ -169,7 +169,7 @@ Every method consumes the same dense feature stack, so it works on `grid` / `vis
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/demo_cosine.gif" alt="cosine similarity follows the clicked seed patch" width="70%"><br>
-  <em><code>cosine</code> mode: the heatmap (right) tracks the seed patch (white dot) — click anywhere on the <a href="https://huggingface.co/spaces/turhancan97/FeatLens-demo">🤗 live demo</a>.</em>
+  <em><code>cosine</code> mode: the heatmap (right, with its [-1, 1] colorbar) tracks the seed patch (white star) — click anywhere on the <a href="https://huggingface.co/spaces/turhancan97/FeatLens-demo">🤗 live demo</a>.</em>
 </p>
 
 | `method` | shows | extra args |
