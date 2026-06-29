@@ -35,6 +35,10 @@ featlens --config configs/example.yaml --images examples/images/cat.jpg --out ou
 
 # Batch a folder (or glob): one figure per image into --out-dir
 featlens --models dino_vitb16 --layers 2 5 8 11 --images photos/ --out-dir out/
+
+# Video (filmstrip + GIF) over a clip/folder, and ViT attention-rollout
+featlens --mode video --models dinov2_vitb14 --images clip.mp4 --n-frames 16 --out strip.png
+featlens --mode attention --models dino_vitb16 --images cat.jpg --overlay --out attn.png
 ```
 
 ## Image size & resizing

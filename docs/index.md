@@ -6,8 +6,9 @@
 vision model — DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, V-JEPA, CNNs, … — loaded from **any**
 source (timm, HuggingFace `transformers`, `torch.hub`, an external repo, or a model you built
 yourself), and from **any layer**, as a clean **model × layer** grid. Color the features by robust
-**PCA**, **cosine-similarity** to a seed patch, **k-means** segmentation, or a **foreground** mask
-([methods](methods.md)) — and match patches **across two images**.
+**PCA**, **cosine-similarity** to a seed patch, **k-means** segmentation, a **foreground** mask, or
+**saliency** ([methods](methods.md)) — match patches **across two images**, roll up a ViT's
+**attention**, batch a folder, or sweep a **video** clip.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_peacock.png" alt="DINO feature maps across layers" width="100%">
@@ -15,7 +16,8 @@ yourself), and from **any layer**, as a clean **model × layer** grid. Color the
 
 Most "DINO PCA" scripts are welded to one model. FeatLens separates **representation access**
 (a small adapter layer over the model zoo) from **visualization** (PCA / cosine / k-means /
-foreground), so you can point it at a new model in seconds and compare models/layers side by side.
+foreground / saliency / attention-rollout), so you can point it at a new model in seconds and
+compare models/layers side by side.
 
 ```bash
 pip install "featlens[timm]"
@@ -58,3 +60,11 @@ grid), PCA→RGB per model. Architecture and patch size are fixed, so the differ
 while SigLIP, supervised, and Perception Encoder encode much higher-frequency detail.
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_b16_market.png" alt="six ViT-B/16 backbones compared on one image" width="100%"></p>
+
+**`attention(...)` — attention-rollout for a timm ViT** (DINO ViT-B/16, overlaid) &nbsp;|&nbsp;
+**`video(...)` — per-frame feature maps as a filmstrip:**
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/attention_rollout.png" alt="attention rollout" height="240"><br>
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip.png" alt="video filmstrip" width="100%">
+</p>

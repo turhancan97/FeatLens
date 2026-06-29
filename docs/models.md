@@ -12,8 +12,8 @@ or an explicit `backend:ident`.
 | **Your own model** | `custom_adapter.load(model, feature_fn=…)` | — |
 
 Friendly names (see [`featlens/registry.py`](https://github.com/turhancan97/FeatLens/blob/main/featlens/registry.py))
-cover DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, Perception Encoder and V-JEPA; any other timm id
-works directly.
+cover DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, EVA-02, BEiT, SAM, Perception Encoder and V-JEPA;
+any other timm id works directly.
 
 ## Bring your own model
 
