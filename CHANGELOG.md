@@ -6,6 +6,12 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+- README/docs gallery: a **backbone comparison** panel — six ViT-B/16 models (DINO, DINOv3, MAE,
+  SigLIP, supervised, Perception Encoder) rendered on the same image (`market.jpg`) at 1024px,
+  last-layer PCA maps on a 64×64 grid, so the differences are purely the training objective.
+  Reproducible via `examples/quickstart.py`.
+
 ## [0.2.4] - 2026-06-29
 
 ### Changed

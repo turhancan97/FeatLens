@@ -54,6 +54,13 @@ and method figures further down use DINO ViT-B/16 at the default 224px.
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" height="320">
 </p>
 
+**Same scene, six ViT-B/16 backbones** — `market.jpg` at 1024px, **last-layer** features (a 64×64
+grid), PCA→RGB per model. Architecture and patch size are held fixed, so the differences are purely
+the *training objective*: DINOv3 and DINO carve the scene into smooth semantic regions, MAE stays
+low-frequency, while SigLIP, supervised, and Perception Encoder encode much higher-frequency detail.
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_b16_market.png" alt="six ViT-B/16 backbones compared on one image" width="100%"></p>
+
 **Beyond PCA** — the same DINOv2 row, recolored by **cosine-similarity** to a seed patch,
 **k-means** segmentation, and a **foreground** mask (across layers 2 / 5 / 8 / 11):
 

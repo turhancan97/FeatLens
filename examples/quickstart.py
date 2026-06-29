@@ -24,6 +24,26 @@ for name in HERO_NAMES:
 ll.compare(["dino_vitb16", "dinov2_vitb14", "clip_large_openai"], IMAGES / "cat.jpg",
            layer=-1, out=HERE / "compare_models.png")
 
+# 2b) Same scene, six ViT-B/16 backbones: last-layer PCA maps at 1024px (a 64x64 grid). Same
+#     architecture and patch size throughout, so the differences are purely the training objective.
+def _compare_b16_market():
+    import matplotlib.pyplot as plt
+    from featlens import FeatureExtractor, methods
+    models = [("dino_vitb16", "DINO"), ("dinov3_vitb16", "DINOv3"), ("mae_vitb16", "MAE"),
+              ("siglip_vitb16", "SigLIP"), ("supervised_vitb16", "Supervised (AugReg)"),
+              ("perception_encoder_vitb16", "Perception Encoder")]
+    fig, axes = plt.subplots(2, 3, figsize=(12, 8.4))
+    for ax, (spec, label) in zip(axes.ravel(), models):
+        ex = FeatureExtractor(spec, layers=[-1], img_size=1024)
+        feats = ex.forward(ex.load_images([IMAGES / "market.jpg"]))  # [1, 1, D, h, w]
+        ax.imshow(methods.colorize(feats[0, 0].permute(1, 2, 0), "pca"), interpolation="nearest")
+        ax.set_title(label, fontsize=14); ax.set_xticks([]); ax.set_yticks([])
+    fig.tight_layout(pad=1.2)
+    fig.savefig(HERE / "compare_b16_market.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+_compare_b16_market()
+
 # 3) Full model x layer grid, overlaid on the source image.
 ll.grid(["dino_vitb16", "dinov2_vitb14"], IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
         out=HERE / "grid_overlay.png", overlay=True)
