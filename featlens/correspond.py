@@ -44,12 +44,15 @@ def correspond(
     arrows: bool = True,
     out: Optional[Union[str, Path]] = None,
 ):
-    """Render seed-patch correspondence between two images.
+    """Render seed-patch correspondence between two images, as three panels.
 
-    Left: image A with the seed patch marked. Right: image B as a cosine-similarity heatmap with
-    the top-``topk`` matching patches marked. When ``arrows`` is set (default), a line is drawn
-    from the seed to each match across the two panels. Returns the saved path (if ``out``) or the
-    figure.
+    1. **source** — image A with the seed patch marked.
+    2. **target** — the original image B; the top-``topk`` matches are circled and (when
+       ``arrows`` is set, the default) an arrow runs from the seed to each match.
+    3. **cosine similarity** — image B's similarity heatmap with the same matches circled.
+
+    Each match gets its own color, shared between the target and heatmap panels so the two line
+    up at a glance. Returns the saved path (if ``out``) or the figure.
     """
     from PIL import Image
 
@@ -73,10 +76,11 @@ def correspond(
     top_cells = np.argsort(sim.reshape(-1))[::-1][:max(1, topk)]
 
     src_a = _denorm_source(ex, pil_a, interpolation_size)
+    src_b = _denorm_source(ex, pil_b, interpolation_size)
     heat_up = _interp_rgb(heat, interpolation_size)
 
-    return _compose_pair(
-        src_a, heat_up, (r, c), [divmod(int(i), w) for i in top_cells], (h, w),
+    return _compose_triple(
+        src_a, src_b, heat_up, (r, c), [divmod(int(i), w) for i in top_cells], (h, w),
         interpolation_size, arrows, out)
 
 
@@ -95,7 +99,7 @@ def _interp_rgb(rgb: np.ndarray, size: int) -> np.ndarray:
     return t[0].permute(1, 2, 0).numpy()
 
 
-def _compose_pair(src_a, heat_b, seed_cell, match_cells, grid_hw, size, arrows, out):
+def _compose_triple(src_a, src_b, heat_b, seed_cell, match_cells, grid_hw, size, arrows, out):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -104,31 +108,40 @@ def _compose_pair(src_a, heat_b, seed_cell, match_cells, grid_hw, size, arrows, 
 
     h, w = grid_hw
     sy, sx = (seed_cell[0] + 0.5) / h * size, (seed_cell[1] + 0.5) / w * size
+    outline = [pe.withStroke(linewidth=3.0, foreground="black")]
+    palette = plt.get_cmap("tab10")
+    colors = [palette(i % 10) for i in range(len(match_cells))]
 
-    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
     axes[0].imshow(np.clip(src_a, 0, 1))
     axes[0].scatter([sx], [sy], s=180, marker="*", c="white", edgecolors="black", linewidths=1.2)
     axes[0].set_title("source (seed)", fontsize=11)
-    axes[1].imshow(np.clip(heat_b, 0, 1))
-    outline = [pe.withStroke(linewidth=3.0, foreground="black")]
+    axes[1].imshow(np.clip(src_b, 0, 1))
+    axes[1].set_title("target (matches)", fontsize=11)
+    axes[2].imshow(np.clip(heat_b, 0, 1))
+    axes[2].set_title("cosine similarity", fontsize=11)
+
     for rank, (my, mx) in enumerate(match_cells):
         py, px = (my + 0.5) / h * size, (mx + 0.5) / w * size
+        color = colors[rank]
         best = rank == 0
-        axes[1].scatter([px], [py], s=140 if best else 110, marker="o", facecolors="none",
-                        edgecolors="white", linewidths=2.0 if best else 1.5,
-                        path_effects=outline)
+        size_pt = 150 if best else 110
+        lw = 2.2 if best else 1.6
+        # Same colored circle on both the target photo and the heatmap, so they correspond.
+        for ax in (axes[1], axes[2]):
+            ax.scatter([px], [py], s=size_pt, marker="o", facecolors="none",
+                       edgecolors=[color], linewidths=lw, path_effects=outline)
         if arrows:
-            # An arrow from the seed (panel A) to this match (panel B), drawn across both axes.
+            # Arrow from the seed (panel 0) to this match on the *original* target photo (panel 1).
             con = ConnectionPatch(
                 xyA=(sx, sy), coordsA=axes[0].transData,
                 xyB=(px, py), coordsB=axes[1].transData,
-                arrowstyle="-|>", color="white", linewidth=2.0 if best else 1.3,
-                mutation_scale=16 if best else 11, alpha=1.0 if best else 0.6,
+                arrowstyle="-|>", color=color, linewidth=2.0 if best else 1.3,
+                mutation_scale=16 if best else 11, alpha=1.0 if best else 0.8,
                 shrinkA=6, shrinkB=6, zorder=5)
             con.set_path_effects(outline)
             con.set_clip_on(False)
             fig.add_artist(con)
-    axes[1].set_title("target (cosine similarity)", fontsize=11)
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])
     fig.tight_layout()
