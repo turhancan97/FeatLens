@@ -24,6 +24,18 @@ from .pca import fit_pca_stats, get_pca_map
 ModelSpec = Union[str, FeatureExtractor, Tuple[str, str]]
 
 
+def _maybe_stack(grid):
+    """Stack a nested ``[R][C]`` list of arrays into one ``np.ndarray`` if shapes are uniform.
+
+    Tiles differ in shape only when batching several images of different sizes into one figure; in
+    that (rare) case we keep the nested list so nothing is silently misaligned.
+    """
+    shapes = {a.shape for row in grid for a in row}
+    if len(shapes) == 1:
+        return np.array([[a for a in row] for row in grid])
+    return grid
+
+
 class FeatureGrid:
     def __init__(
         self,
@@ -145,6 +157,21 @@ class FeatureGrid:
             rgbs.append(self._interp_rgb(rgb))
         return np.concatenate(rgbs, axis=0)  # vertical stack, matching the PCA layout
 
+    def _method_scalar(self, feats: torch.Tensor, li: int):
+        """The native-grid scalar field for layer ``li`` (cosine sim / saliency), B-stacked.
+
+        Returns ``None`` for methods without a single scalar field (pca / kmeans / foreground).
+        """
+        fmap = feats[:, li]  # [B, D, h, w]
+        scals = []
+        for b in range(fmap.shape[0]):
+            single = rearrange(fmap[b], "d h w -> h w d")
+            s = methods.method_scalar(single, self.method, seed=self.seed)
+            if s is None:
+                return None
+            scals.append(s)
+        return np.concatenate(scals, axis=0)  # [(B h), w]
+
     def _interp_rgb(self, rgb: np.ndarray) -> np.ndarray:
         if not self.interp:
             return rgb
@@ -172,6 +199,7 @@ class FeatureGrid:
         overlay: bool = False,
         overlay_alpha: float = 0.45,
         figscale: float = 2.6,
+        return_data: bool = False,
     ):
         from PIL import Image
 
@@ -183,6 +211,7 @@ class FeatureGrid:
         n_rows = len(self._models)
         n_cols = len(self.layers)
         tiles: List[List[np.ndarray]] = [[None] * n_cols for _ in range(n_rows)]
+        scalars: List[List[Optional[np.ndarray]]] = [[None] * n_cols for _ in range(n_rows)]
 
         for r, (label, ex) in enumerate(self._models):
             feats = self._features_for_model(ex, pils, img_bytes)  # [B, L, D, h, w]
@@ -203,9 +232,22 @@ class FeatureGrid:
                 if overlay and src is not None:
                     rgb = (1 - overlay_alpha) * src + overlay_alpha * rgb
                 tiles[r][c] = np.clip(rgb, 0, 1)
+                if return_data:
+                    scalars[r][c] = self._method_scalar(feats, c)
 
-        return self._compose(tiles, [lbl for lbl, _ in self._models],
-                             [str(l) for l in self.layers], out_path, figscale)
+        row_labels = [lbl for lbl, _ in self._models]
+        col_labels = [str(l) for l in self.layers]
+        composed = self._compose(tiles, row_labels, col_labels, out_path, figscale)
+        if not return_data:
+            return composed
+        return {
+            "tiles": _maybe_stack(tiles),
+            "scalars": None if scalars[0][0] is None else _maybe_stack(scalars),
+            "row_labels": row_labels,
+            "col_labels": col_labels,
+            "path": composed if out_path else None,
+            "fig": None if out_path else composed,
+        }
 
     def _overlay_source(self, ex: FeatureExtractor, pils) -> np.ndarray:
         """Vertically-stacked denormalized source images at the tile resolution."""
@@ -244,6 +286,8 @@ class FeatureGrid:
         # A readable scale for the methods whose colors carry meaning.
         if self.method == "cosine":
             methods.cosine_colorbar(fig, axes.ravel().tolist(), self.colormap)
+        elif self.method == "saliency":
+            methods.saliency_colorbar(fig, axes.ravel().tolist(), self.colormap)
         elif self.method == "kmeans":
             methods.kmeans_legend(fig, self.k)
         if out_path:

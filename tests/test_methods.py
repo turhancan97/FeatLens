@@ -14,10 +14,16 @@ def _fmap(h=14, w=14, d=32):
 
 def test_colorize_shapes_and_range():
     fmap = _fmap()
-    for method in ("pca", "cosine", "kmeans", "foreground"):
+    for method in ("pca", "cosine", "kmeans", "foreground", "saliency"):
         rgb = methods.colorize(fmap, method, seed=(0.5, 0.5), k=5)
         assert rgb.shape == (14, 14, 3)
         assert rgb.min() >= 0.0 and rgb.max() <= 1.0
+
+
+def test_saliency_map_normalized():
+    sal = methods.saliency_map(_fmap())
+    assert sal.shape == (14, 14)
+    assert np.isclose(sal.min(), 0.0) and np.isclose(sal.max(), 1.0)
 
 
 def test_cosine_seed_is_max_similarity():
@@ -41,7 +47,7 @@ def test_foreground_is_binary():
 
 
 def test_grid_methods_render(tmp_path):
-    for method in ("cosine", "kmeans", "foreground"):
+    for method in ("cosine", "kmeans", "foreground", "saliency"):
         out = FeatureGrid(["vit_tiny_patch16_224"], layers=[2, -1], pretrained=False,
                           method=method, seed=(0.5, 0.5), device="cpu").render(
             "examples/images/cat.jpg", out_path=tmp_path / f"{method}.png")
@@ -80,4 +86,11 @@ def test_scales_present_only_where_meaningful():
     fig = FeatureGrid(["vit_tiny_patch16_224"], layers=[-1], pretrained=False,
                       method="kmeans", k=4, device="cpu").render("examples/images/cat.jpg")
     assert fig.legends and len(fig.legends[0].get_texts()) == 4
+    plt.close(fig)
+
+    # saliency -> a [0, 1] colorbar.
+    fig = FeatureGrid(["vit_tiny_patch16_224"], layers=[-1], pretrained=False,
+                      method="saliency", device="cpu").render("examples/images/cat.jpg")
+    assert any(getattr(ax, "get_ylabel", lambda: "")() == "activation (norm.)"
+               for ax in fig.axes)
     plt.close(fig)

@@ -28,14 +28,23 @@ def _one_layer_map(ex: FeatureExtractor, pil, layer: int, device) -> torch.Tenso
     return rearrange(feats[0, 0], "d h w -> h w d")
 
 
+def _as_seed_list(seed):
+    """Normalize ``seed`` to a list of ``(x, y)`` pairs — accepts one pair or a list of pairs."""
+    s = list(seed)
+    if len(s) == 2 and all(isinstance(v, (int, float)) for v in s):
+        return [(float(s[0]), float(s[1]))]
+    return [(float(a), float(b)) for a, b in s]
+
+
 def correspond(
     model: Union[str, FeatureExtractor],
     img_a: Union[str, Path],
     img_b: Union[str, Path],
     *,
     layer: int = -1,
-    seed: Sequence[float] = (0.5, 0.5),
+    seed: Sequence = (0.5, 0.5),
     topk: int = 1,
+    mutual: bool = False,
     img_size: int = 224,
     resize_mode: str = "squash",
     pretrained: bool = True,
@@ -43,17 +52,20 @@ def correspond(
     colormap: str = "turbo",
     interpolation_size: int = 224,
     arrows: bool = True,
+    return_data: bool = False,
     out: Optional[Union[str, Path]] = None,
 ):
     """Render seed-patch correspondence between two images, as three panels.
 
-    1. **source** — image A with the seed patch marked.
+    1. **source** — image A with the seed patch(es) marked.
     2. **target** — the original image B; the top-``topk`` matches are circled and (when
-       ``arrows`` is set, the default) an arrow runs from the seed to each match.
+       ``arrows`` is set, the default) an arrow runs from each seed to its matches.
     3. **cosine similarity** — image B's similarity heatmap with the same matches circled.
 
-    Each match gets its own color, shared between the target and heatmap panels so the two line
-    up at a glance. Returns the saved path (if ``out``) or the figure.
+    ``seed`` may be a single ``(x, y)`` or a **list** of them (multi-seed). With ``mutual=True``,
+    matches are filtered to **cycle-consistent** ones — a match patch in B whose own nearest
+    neighbour back in A is the seed patch. Returns the saved path (if ``out``) or the figure; with
+    ``return_data=True`` returns a dict of the similarity maps, seeds, matches and mutual flags.
     """
     from PIL import Image
 
@@ -68,21 +80,47 @@ def correspond(
     fb = _one_layer_map(ex, pil_b, layer, dev)
     h, w, _ = fa.shape
 
-    r, c = seed_to_cell(seed, h, w)
-    seed_vec = F.normalize(fa[r, c].reshape(1, -1), dim=1)
+    flat_a = F.normalize(fa.reshape(h * w, -1), dim=1)
     flat_b = F.normalize(fb.reshape(h * w, -1), dim=1)
-    sim = (flat_b @ seed_vec.T).reshape(h, w).numpy()  # [-1, 1]
 
-    heat = apply_colormap((sim + 1.0) / 2.0, colormap)  # [h, w, 3]
-    top_cells = np.argsort(sim.reshape(-1))[::-1][:max(1, topk)]
+    seeds = _as_seed_list(seed)
+    groups = []  # each: (seed_cell, [match_cells], [mutual_flags], sim[h, w])
+    for sxy in seeds:
+        r, c = seed_to_cell(sxy, h, w)
+        sidx = r * w + c
+        sim = (flat_b @ flat_a[sidx:sidx + 1].T).reshape(h, w).numpy()  # [-1, 1]
+        order = np.argsort(sim.reshape(-1))[::-1][:max(1, topk)]
+        cells, flags = [], []
+        for mi in order:
+            nn_a = int((flat_a @ flat_b[int(mi)]).argmax())  # B->A nearest neighbour
+            is_mutual = nn_a == sidx
+            if mutual and not is_mutual:
+                continue
+            cells.append(divmod(int(mi), w))
+            flags.append(is_mutual)
+        groups.append(((r, c), cells, flags, sim))
+
+    # Combined heatmap: max similarity across seeds (identical to the single seed's map for one seed).
+    sim_stack = np.stack([g[3] for g in groups], axis=0)
+    heat = apply_colormap((sim_stack.max(axis=0) + 1.0) / 2.0, colormap)  # [h, w, 3]
 
     src_a = _denorm_source(ex, pil_a, interpolation_size)
     src_b = _denorm_source(ex, pil_b, interpolation_size)
     heat_up = _interp_rgb(heat, interpolation_size)
 
-    return _compose_triple(
-        src_a, src_b, heat_up, (r, c), [divmod(int(i), w) for i in top_cells], (h, w),
+    composed = _compose_triple(
+        src_a, src_b, heat_up, [(g[0], g[1]) for g in groups], (h, w),
         interpolation_size, arrows, out, colormap)
+    if not return_data:
+        return composed
+    return {
+        "similarity": sim_stack,                  # [S, h, w] in [-1, 1]
+        "seeds": seeds,                           # [(x, y), ...] normalized
+        "matches": [g[1] for g in groups],        # [[(row, col), ...], ...] per seed
+        "mutual": [g[2] for g in groups],         # [[bool, ...], ...] per seed
+        "path": composed if out else None,
+        "fig": None if out else composed,
+    }
 
 
 # ---- rendering helpers ----------------------------------------------------
@@ -100,8 +138,7 @@ def _interp_rgb(rgb: np.ndarray, size: int) -> np.ndarray:
     return t[0].permute(1, 2, 0).numpy()
 
 
-def _compose_triple(src_a, src_b, heat_b, seed_cell, match_cells, grid_hw, size, arrows, out,
-                    colormap="turbo"):
+def _compose_triple(src_a, src_b, heat_b, groups, grid_hw, size, arrows, out, colormap="turbo"):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -109,41 +146,44 @@ def _compose_triple(src_a, src_b, heat_b, seed_cell, match_cells, grid_hw, size,
     from matplotlib.patches import ConnectionPatch
 
     h, w = grid_hw
-    sy, sx = (seed_cell[0] + 0.5) / h * size, (seed_cell[1] + 0.5) / w * size
     outline = [pe.withStroke(linewidth=3.0, foreground="black")]
     palette = plt.get_cmap("tab10")
-    colors = [palette(i % 10) for i in range(len(match_cells))]
+    single = len(groups) == 1  # one seed: color per match (as before); many: color per seed
+
+    def to_px(cell):
+        return (cell[1] + 0.5) / w * size, (cell[0] + 0.5) / h * size  # (x, y)
 
     fig, axes = plt.subplots(1, 3, figsize=(12, 4))
-    axes[0].imshow(np.clip(src_a, 0, 1))
-    axes[0].scatter([sx], [sy], s=180, marker="*", c="white", edgecolors="black", linewidths=1.2)
-    axes[0].set_title("source (seed)", fontsize=11)
-    axes[1].imshow(np.clip(src_b, 0, 1))
-    axes[1].set_title("target (matches)", fontsize=11)
-    axes[2].imshow(np.clip(heat_b, 0, 1))
-    axes[2].set_title("cosine similarity", fontsize=11)
+    axes[0].imshow(np.clip(src_a, 0, 1)); axes[0].set_title("source (seed)", fontsize=11)
+    axes[1].imshow(np.clip(src_b, 0, 1)); axes[1].set_title("target (matches)", fontsize=11)
+    axes[2].imshow(np.clip(heat_b, 0, 1)); axes[2].set_title("cosine similarity", fontsize=11)
 
-    for rank, (my, mx) in enumerate(match_cells):
-        py, px = (my + 0.5) / h * size, (mx + 0.5) / w * size
-        color = colors[rank]
-        best = rank == 0
-        size_pt = 150 if best else 110
-        lw = 2.2 if best else 1.6
-        # Same colored circle on both the target photo and the heatmap, so they correspond.
-        for ax in (axes[1], axes[2]):
-            ax.scatter([px], [py], s=size_pt, marker="o", facecolors="none",
-                       edgecolors=[color], linewidths=lw, path_effects=outline)
-        if arrows:
-            # Arrow from the seed (panel 0) to this match on the *original* target photo (panel 1).
-            con = ConnectionPatch(
-                xyA=(sx, sy), coordsA=axes[0].transData,
-                xyB=(px, py), coordsB=axes[1].transData,
-                arrowstyle="-|>", color=color, linewidth=2.0 if best else 1.3,
-                mutation_scale=16 if best else 11, alpha=1.0 if best else 0.8,
-                shrinkA=6, shrinkB=6, zorder=5)
-            con.set_path_effects(outline)
-            con.set_clip_on(False)
-            fig.add_artist(con)
+    for gi, (seed_cell, match_cells) in enumerate(groups):
+        sx, sy = to_px(seed_cell)
+        star_c = "white" if single else palette(gi % 10)
+        axes[0].scatter([sx], [sy], s=180, marker="*", c=[star_c],
+                        edgecolors="black", linewidths=1.2)
+        for rank, cell in enumerate(match_cells):
+            px, py = to_px(cell)
+            color = palette(rank % 10) if single else palette(gi % 10)
+            best = rank == 0
+            size_pt = 150 if best else 110
+            lw = 2.2 if best else 1.6
+            # Same colored circle on both the target photo and the heatmap, so they correspond.
+            for ax in (axes[1], axes[2]):
+                ax.scatter([px], [py], s=size_pt, marker="o", facecolors="none",
+                           edgecolors=[color], linewidths=lw, path_effects=outline)
+            if arrows:
+                # Arrow from the seed (panel 0) to this match on the *original* target photo (panel 1).
+                con = ConnectionPatch(
+                    xyA=(sx, sy), coordsA=axes[0].transData,
+                    xyB=(px, py), coordsB=axes[1].transData,
+                    arrowstyle="-|>", color=color, linewidth=2.0 if best else 1.3,
+                    mutation_scale=16 if best else 11, alpha=1.0 if best else 0.8,
+                    shrinkA=6, shrinkB=6, zorder=5)
+                con.set_path_effects(outline)
+                con.set_clip_on(False)
+                fig.add_artist(con)
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])
     fig.tight_layout()

@@ -6,6 +6,20 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-06-29
+
+### Added
+- **`saliency` method** — a per-patch L2-norm "where the model fires" heatmap (normalized to
+  [0, 1]), available everywhere `method=` is (`--method saliency` on the CLI, and in the demo). Gets
+  a [0, 1] colorbar like the other scalar views.
+- **`return_data=True`** on `visualize` / `compare` / `grid` / `correspond` — returns a dict with the
+  rendered RGB `tiles` **and the underlying scalar field** (`scalars`: cosine similarity / saliency
+  magnitudes; `None` for pca / kmeans / foreground), plus labels and the `path` / `fig`. Use FeatLens
+  output in a notebook or pipeline without re-reading PNGs. Existing calls are unchanged.
+- **Correspondence: multi-seed + mutual-NN.** `correspond(seed=...)` now accepts a **list** of seeds
+  (each gets its own color); `mutual=True` (CLI `--mutual`) keeps only **cycle-consistent** matches —
+  a match in B whose own nearest neighbour back in A is the seed — filtering out spurious matches.
+
 ## [0.2.5] - 2026-06-29
 
 ### Added
@@ -97,7 +111,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.5...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.6...HEAD
+[0.2.6]: https://github.com/turhancan97/FeatLens/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/turhancan97/FeatLens/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/turhancan97/FeatLens/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/turhancan97/FeatLens/compare/v0.2.2...v0.2.3

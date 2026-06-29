@@ -27,8 +27,8 @@ def _build_parser() -> argparse.ArgumentParser:
                         "compare = many models, one layer; correspond = seed-patch matching "
                         "between --images[0] and --image-b.")
     p.add_argument("--layer", type=int, default=-1, help="Single layer for --mode compare/correspond.")
-    p.add_argument("--method", choices=["pca", "cosine", "kmeans", "foreground"], default="pca",
-                   help="Visualization method (default: pca).")
+    p.add_argument("--method", choices=["pca", "cosine", "kmeans", "foreground", "saliency"],
+                   default="pca", help="Visualization method (default: pca).")
     p.add_argument("--seed", nargs=2, type=float, metavar=("X", "Y"), default=None,
                    help="Seed patch as normalized image coords in [0,1] for cosine/correspond.")
     p.add_argument("--k", type=int, default=6, help="Number of clusters for --method kmeans.")
@@ -36,6 +36,8 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--cache", action="store_true", help="Cache extracted features on disk.")
     p.add_argument("--image-b", default=None, help="Second image for --mode correspond.")
     p.add_argument("--topk", type=int, default=1, help="Top matches to mark for --mode correspond.")
+    p.add_argument("--mutual", action="store_true",
+                   help="--mode correspond: keep only cycle-consistent (mutual-NN) matches.")
     p.add_argument("--out", default="featlens_out.png", help="Output PNG path.")
     p.add_argument("--out-dir", default=None,
                    help="Batch mode: render one figure per input image into this directory "
@@ -85,7 +87,7 @@ def main(argv: List[str] = None) -> None:
         out = ll.correspond(
             models[0], args.images[0], args.image_b, layer=args.layer,
             seed=tuple(args.seed) if args.seed else (0.5, 0.5), topk=args.topk,
-            img_size=img_size, resize_mode=resize_mode, pretrained=pretrained,
+            mutual=args.mutual, img_size=img_size, resize_mode=resize_mode, pretrained=pretrained,
             device=args.device, colormap=args.colormap, out=args.out)
         print(f"Saved: {Path(out).resolve()}")
         return
