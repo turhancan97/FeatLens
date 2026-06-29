@@ -20,7 +20,7 @@ robust **PCA**, **cosine-similarity** to a seed patch, **k-means** segmentation,
 mask — and match patches **across two images**.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" alt="DINO feature maps across layers" width="100%">
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_peacock.png" alt="DINO feature maps across layers" width="100%">
 </p>
 
 Most "DINO PCA" scripts are welded to one model. FeatLens separates **representation access**
@@ -29,16 +29,18 @@ foreground), so you can point it at a new model in seconds and compare models/la
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Gallery
 
-All produced by `examples/quickstart.py` on the three bundled images. Sizes below are the
-**originals**; each image is resized to `img_size` (default 224) before the model.
+All produced by `examples/quickstart.py`. The per-image rows below use **DINO ViT-S/8 at 768px**
+— a small *patch-8* backbone at high resolution gives a fine **96×96** feature grid, so thin
+structures (whiskers, feather barbs, individual fruit) stay crisp. The model × layer, `compare`
+and method figures further down use DINO ViT-B/16 at the default 224px.
 
-**`visualize(...)` — DINO ViT-B/16 feature maps across layers 2 / 5 / 8 / 11:**
+**`visualize(...)` — DINO ViT-S/8 @ 768px, feature maps across layers 2 / 5 / 8 / 11:**
 
 | Image (original size) | Source | Feature maps |
 |---|---|---|
-| `astronaut.jpg` · 512×512 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/astronaut.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_astronaut.png" width="430"> |
-| `cat.jpg` · 451×300 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/cat.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" width="430"> |
-| `coffee.jpg` · 600×400 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/coffee.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_coffee.png" width="430"> |
+| `peacock.jpg` · 1600×1280 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/peacock.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_peacock.png" width="430"> |
+| `cat_hires.jpg` · 1600×1200 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/cat_hires.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat_hires.png" width="430"> |
+| `market.jpg` · 1600×1063 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/market.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_market.png" width="430"> |
 
 **`grid(...)` — model × layer, overlaid on the image** (DINO vs DINOv2 across layers 2/5/8/11):
 
@@ -61,7 +63,9 @@ All produced by `examples/quickstart.py` on the three bundled images. Sizes belo
 | `kmeans` (k=6) | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_kmeans.png" width="520"> |
 | `foreground` | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/method_foreground.png" width="520"> |
 
-**`correspond(...)` — seed a patch in image A, find the matches in image B:**
+**`correspond(...)` — seed a patch in image A, find the matches in image B.** Here the seed is on
+a real cat's eye; DINOv2 features match the *same semantic part* on a watercolor cat, across the
+photo→illustration domain gap:
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/correspond.png" alt="cross-image correspondence" height="300"></p>
 

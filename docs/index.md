@@ -10,7 +10,7 @@ yourself), and from **any layer**, as a clean **model × layer** grid. Color the
 ([methods](methods.md)) — and match patches **across two images**.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" alt="DINO feature maps across layers" width="100%">
+  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_peacock.png" alt="DINO feature maps across layers" width="100%">
 </p>
 
 Most "DINO PCA" scripts are welded to one model. FeatLens separates **representation access**
@@ -31,13 +31,14 @@ fl.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overl
 
 ## Gallery
 
-DINO ViT-B/16 feature maps across layers 2 / 5 / 8 / 11, on the bundled example images:
+DINO ViT-S/8 @ 768px feature maps across layers 2 / 5 / 8 / 11 — a *patch-8* backbone at high
+resolution gives a fine **96×96** grid, so thin structures stay crisp:
 
 | Image (original size) | Source | Feature maps |
 |---|---|---|
-| `astronaut.jpg` · 512×512 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/astronaut.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_astronaut.png" width="420"> |
-| `cat.jpg` · 451×300 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/cat.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat.png" width="420"> |
-| `coffee.jpg` · 600×400 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/coffee.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_coffee.png" width="420"> |
+| `peacock.jpg` · 1600×1280 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/peacock.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_peacock.png" width="420"> |
+| `cat_hires.jpg` · 1600×1200 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/cat_hires.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat_hires.png" width="420"> |
+| `market.jpg` · 1600×1063 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/market.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_market.png" width="420"> |
 
 **`grid(...)` — model × layer, overlaid on the image:**
 
