@@ -11,7 +11,8 @@ Quick start::
     ll.compare(["dino_vitb16", "mae_vitb16"], "img.jpg", layer=-1, out="cmp.png")    # compare models
 
 v0.2 adds non-PCA views (``method="cosine"|"kmeans"|"foreground"``), an opt-in feature
-``cache=True``, and :func:`correspond` for cross-image patch matching.
+``cache=True``, :func:`correspond` for cross-image patch matching, and :func:`batch` to render a
+whole directory (one figure per image).
 """
 
 from typing import Optional, Sequence, Union
@@ -20,9 +21,10 @@ from pathlib import Path
 from .extractor import FeatureExtractor
 from .grid import FeatureGrid
 from .correspond import correspond
+from .batch import batch
 
-__version__ = "0.2.4"
-__all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond"]
+__version__ = "0.2.5"
+__all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond", "batch"]
 
 
 _RENDER_KEYS = ("overlay", "overlay_alpha", "figscale")

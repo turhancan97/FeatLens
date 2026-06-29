@@ -219,8 +219,7 @@ class FeatureGrid:
             imgs.append(img[0].permute(1, 2, 0).numpy())
         return np.concatenate(imgs, axis=0)
 
-    @staticmethod
-    def _compose(tiles, row_labels, col_labels, out_path, figscale):
+    def _compose(self, tiles, row_labels, col_labels, out_path, figscale):
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
@@ -242,6 +241,11 @@ class FeatureGrid:
                 if c == 0:
                     ax.set_ylabel(row_labels[r], fontsize=11)
         fig.tight_layout()
+        # A readable scale for the methods whose colors carry meaning.
+        if self.method == "cosine":
+            methods.cosine_colorbar(fig, axes.ravel().tolist(), self.colormap)
+        elif self.method == "kmeans":
+            methods.kmeans_legend(fig, self.k)
         if out_path:
             Path(out_path).parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(out_path, dpi=200, bbox_inches="tight")

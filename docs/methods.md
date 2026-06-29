@@ -28,6 +28,28 @@ fl.grid(["dinov2_vitb14"], "img.jpg", layers=[-1], method="foreground")
 `seed` is **normalized image coordinates** `(x, y) ∈ [0, 1]`, so it is independent of model and
 resolution. The seed patch is marked white in the heatmap.
 
+`cosine` heatmaps carry a shared **[-1, 1] colorbar** so the similarity scale is readable, and
+`kmeans` adds a **cluster-color legend**. (k-means runs per tile, so its colors are a per-tile key,
+not comparable across tiles.) `pca` has no colorbar — its RGB axes are arbitrary.
+
+## Batch / directory mode
+
+Render **one figure per image** over a directory, glob, or list with `featlens.batch(...)`. The
+model is built once and reused across every image, and `cache=True` still applies:
+
+```python
+fl.batch("dino_vitb16", "photos/", "out/", layers=[2, 5, 8, 11])      # a folder
+fl.batch("dino_vitb16", "photos/*.jpg", "out/", method="cosine", seed=(0.5, 0.5))  # a glob
+```
+
+`mode=` selects the per-image view (`"grid"`, `"visualize"`, or `"compare"`); other keywords
+(`method`, `k`, `colormap`, `cache`, `img_size`, …) are forwarded to the grid. Each output is named
+after its source image (`out/<stem>.png`). On the CLI, pass `--out-dir`:
+
+```bash
+featlens --models dino_vitb16 --layers 2 5 8 11 --images photos/ --out-dir out/
+```
+
 ## Cross-image correspondence
 
 Seed a patch in image A and find the matching patches in image B:

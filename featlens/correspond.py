@@ -16,6 +16,7 @@ import torch
 import torch.nn.functional as F
 from einops import rearrange
 
+from . import methods
 from .extractor import FeatureExtractor
 from .methods import apply_colormap, seed_to_cell
 
@@ -81,7 +82,7 @@ def correspond(
 
     return _compose_triple(
         src_a, src_b, heat_up, (r, c), [divmod(int(i), w) for i in top_cells], (h, w),
-        interpolation_size, arrows, out)
+        interpolation_size, arrows, out, colormap)
 
 
 # ---- rendering helpers ----------------------------------------------------
@@ -99,7 +100,8 @@ def _interp_rgb(rgb: np.ndarray, size: int) -> np.ndarray:
     return t[0].permute(1, 2, 0).numpy()
 
 
-def _compose_triple(src_a, src_b, heat_b, seed_cell, match_cells, grid_hw, size, arrows, out):
+def _compose_triple(src_a, src_b, heat_b, seed_cell, match_cells, grid_hw, size, arrows, out,
+                    colormap="turbo"):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -145,6 +147,7 @@ def _compose_triple(src_a, src_b, heat_b, seed_cell, match_cells, grid_hw, size,
     for ax in axes:
         ax.set_xticks([]); ax.set_yticks([])
     fig.tight_layout()
+    methods.cosine_colorbar(fig, [axes[2]], colormap)  # scale for the similarity panel
     if out:
         Path(out).parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(out, dpi=200, bbox_inches="tight")

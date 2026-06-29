@@ -37,6 +37,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--image-b", default=None, help="Second image for --mode correspond.")
     p.add_argument("--topk", type=int, default=1, help="Top matches to mark for --mode correspond.")
     p.add_argument("--out", default="featlens_out.png", help="Output PNG path.")
+    p.add_argument("--out-dir", default=None,
+                   help="Batch mode: render one figure per input image into this directory "
+                        "(--images may be a directory or glob). Not valid with --mode correspond.")
     p.add_argument("--img-size", type=int, default=224, help="Model input size (must be divisible by patch size).")
     p.add_argument("--resize-mode", choices=["squash", "crop", "pad"], default=None,
                    help="squash=force square (may distort); crop=resize shortest side + center-crop; "
@@ -75,6 +78,8 @@ def main(argv: List[str] = None) -> None:
     resize_mode = args.resize_mode or cfg.get("resize_mode") or "squash"
 
     if args.mode == "correspond":
+        if args.out_dir:
+            raise SystemExit("--out-dir is not valid with --mode correspond (it needs two images).")
         if not args.image_b:
             raise SystemExit("--mode correspond needs --image-b.")
         out = ll.correspond(
@@ -93,6 +98,12 @@ def main(argv: List[str] = None) -> None:
     if basis:
         common["basis"] = basis
     render_kw = dict(overlay=args.overlay, overlay_alpha=args.overlay_alpha)
+
+    if args.out_dir:
+        written = ll.batch(models, args.images, args.out_dir, mode=args.mode,
+                           layers=layers, layer=args.layer, **common, **render_kw)
+        print(f"Wrote {len(written)} figures to {Path(args.out_dir).resolve()}")
+        return
 
     if args.mode == "visualize":
         out = ll.visualize(models[0], args.images, layers=layers, out=args.out, **common, **render_kw)

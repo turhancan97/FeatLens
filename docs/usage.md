@@ -32,6 +32,9 @@ featlens --models dino_vitb16 clip_large_openai --layers 2 5 8 11 \
     --images examples/images/cat.jpg --mode grid --out out/grid.png
 
 featlens --config configs/example.yaml --images examples/images/cat.jpg --out out/grid.png
+
+# Batch a folder (or glob): one figure per image into --out-dir
+featlens --models dino_vitb16 --layers 2 5 8 11 --images photos/ --out-dir out/
 ```
 
 ## Image size & resizing
