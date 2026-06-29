@@ -6,6 +6,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-06-29
+
 ### Changed
 - Refreshed the README/docs showcase: the per-image hero rows are now rendered with a *patch-8*
   backbone (`vit_small_patch8_224.dino`) at 768 px — a fine 96×96 feature grid that resolves thin
@@ -80,7 +82,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/turhancan97/FeatLens/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/turhancan97/FeatLens/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/turhancan97/FeatLens/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/turhancan97/FeatLens/compare/v0.2.0...v0.2.1
