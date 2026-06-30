@@ -48,11 +48,11 @@ resolution gives a fine **96×96** grid, so thin structures stay crisp:
 
 **`compare(...)` — models at the final layer on `cat_hires.jpg` at 448px:**
 
-<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models" width="82%"></p>
 
 **a ResNet-50 (CNN escape hatch) across three images at 768px, each with its `layer -1` feature map:**
 
-<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" width="68%"></p>
 
 **Same scene, six ViT-B/16 backbones** — `market.jpg` at 1024px, **last-layer** features (a 64×64
 grid), PCA→RGB per model. Architecture and patch size are fixed, so the differences are purely the
