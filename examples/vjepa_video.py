@@ -21,11 +21,18 @@ import numpy as np
 from PIL import Image
 
 import featlens as ll
-from featlens.video import _load_frames
 
 HERE = Path(__file__).parent
 CLIP = HERE / "videos" / "cockatoo.mp4"
 N_FRAMES, FPS, DISP = 16, 4, 224
+
+
+def sampled_frames(path, n):
+    """Decode a clip and uniformly sample ``n`` frames (matches what ``featlens.video`` feeds)."""
+    import imageio.v3 as iio  # from the featlens[video] extra
+    frames = [Image.fromarray(f).convert("RGB") for f in iio.imiter(path)]
+    idx = np.linspace(0, len(frames) - 1, n).round().astype(int)
+    return [frames[i] for i in idx]
 
 # vjepa2_1_vitb16 is the temporal V-JEPA 2.1 base model (384px native). 16 sampled frames
 # collapse to 8 spatiotemporal steps (tubelet_size=2); the shared-PCA filmstrip is the row.
@@ -35,7 +42,7 @@ res = ll.video("vjepa2_1_vitb16", CLIP, layers=[-1], n_frames=N_FRAMES, method="
 # Side-by-side GIF: the real input frame next to its V-JEPA feature map. The 16 sampled frames
 # collapse to 8 spatiotemporal steps (tubelet_size=2), so step t lines up with input frame 2t.
 feat = np.asarray(res["frames_rgb"])[-1]            # [steps, DISP, DISP, 3] in [0, 1]
-inputs = _load_frames(CLIP, N_FRAMES)               # the same uniformly sampled frames
+inputs = sampled_frames(CLIP, N_FRAMES)             # the same uniformly sampled frames
 gap = np.ones((DISP, 6, 3), np.float32)
 combo = []
 for t in range(feat.shape[0]):

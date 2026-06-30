@@ -30,3 +30,6 @@ site/
 .DS_Store
 .idea/
 .vscode/
+
+# Hugging Face Space-only LFS config (kept local; not part of the library repo)
+demo/.gitattributes
