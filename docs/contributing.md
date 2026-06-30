@@ -2,7 +2,8 @@
 
 **Contributions are welcome — this is an open-source project and we're happy to accept and
 support them.** Whether it's a new model adapter, a visualization method, a bug fix, documentation,
-or just a question, please jump in.
+or just a question, please jump in. This page mirrors the repository's
+[`CONTRIBUTING.md`](https://github.com/turhancan97/FeatLens/blob/main/CONTRIBUTING.md).
 
 ## Ways to contribute
 

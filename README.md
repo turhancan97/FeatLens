@@ -271,7 +271,7 @@ feature-map script.
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Contributing
 
-**Contributions are welcome — this is an open-source project and we're happy to accept and support them.** Whether it's a new model adapter, a visualization method, a bug fix, docs, or just a question, please jump in:
+**Contributions are welcome — this is an open-source project and we're happy to accept and support them.** Whether it's a new model adapter, a visualization method, a bug fix, docs, or just a question, please jump in (see [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide):
 
 - 🐛 **Found a bug or have an idea?** [Open an issue](https://github.com/turhancan97/FeatLens/issues) — bug reports, feature requests, and questions are all welcome.
 - 🔧 **Want to send a change?** [Fork the repo](https://github.com/turhancan97/FeatLens/fork), create a branch, and [open a pull request](https://github.com/turhancan97/FeatLens/pulls). Small, focused PRs are easiest to review.
