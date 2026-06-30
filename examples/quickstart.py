@@ -20,10 +20,23 @@ for name in HERO_NAMES:
     ll.visualize("timm:vit_small_patch8_224.dino", IMAGES / f"{name}.jpg", layers=[2, 5, 8, 11],
                  img_size=768, out=HERE / f"feat_{name}.png")
 
-# 2) Compare models at the final layer (per-tile basis). Use the higher-resolution cat source and
-#    a larger model input so the feature grids are denser and the gallery image reads more cleanly.
-ll.compare(["dino_vitb16", "dinov2_vitb14", "clip_large_openai"], IMAGES / "cat_hires.jpg",
-           layer=-1, img_size=448, out=HERE / "compare_models.png")
+# 2) Compare models at the final layer (per-tile PCA basis). This is `compare(...)` laid out as a
+#    horizontal row (the function stacks models vertically); cat_hires at 448px for a denser grid.
+def _compare_models():
+    import matplotlib.pyplot as plt
+    from featlens import FeatureExtractor, methods
+    models = [("dino_vitb16", "DINO"), ("dinov2_vitb14", "DINOv2"), ("clip_large_openai", "CLIP")]
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4.3))
+    for ax, (spec, label) in zip(axes.ravel(), models):
+        ex = FeatureExtractor(spec, layers=[-1], img_size=448)
+        feats = ex.forward(ex.load_images([IMAGES / "cat_hires.jpg"]))  # [1, 1, D, h, w]
+        ax.imshow(methods.colorize(feats[0, 0].permute(1, 2, 0), "pca"), interpolation="nearest")
+        ax.set_title(label, fontsize=14); ax.set_xticks([]); ax.set_yticks([])
+    fig.tight_layout(pad=1.2)
+    fig.savefig(HERE / "compare_models.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+_compare_models()
 
 # 2b) Same scene, six ViT-B/16 backbones: last-layer PCA maps at 1024px (a 64x64 grid). Same
 #     architecture and patch size throughout, so the differences are purely the training objective.
@@ -117,26 +130,28 @@ def _resnet_gallery():
     import matplotlib.pyplot as plt
     from PIL import Image
 
+    # Horizontal layout: images across the columns, source on the top row and the ResNet-50
+    # layer -1 feature map below it.
     names = [("cat_hires", "Cat"), ("peacock", "Peacock"), ("market", "Market")]
     ex = FeatureExtractor(lm, img_size=768)
-    fig, axes = plt.subplots(len(names), 2, figsize=(9.2, 13.2))
-    axes[0, 0].set_title("source", fontsize=12)
-    axes[0, 1].set_title("ResNet-50 layer -1", fontsize=12)
+    fig, axes = plt.subplots(2, len(names), figsize=(13.2, 9.2))
 
-    for r, (stem, label) in enumerate(names):
+    for c, (stem, label) in enumerate(names):
         img_path = IMAGES / f"{stem}.jpg"
         with Image.open(img_path).convert("RGB") as pil:
             src = ex.denormalize(ex.transform(pil))
         feats = ex.forward(ex.load_images([img_path]))  # [1, 1, D, h, w]
         rgb = methods.colorize(feats[0, 0].permute(1, 2, 0), "pca")
 
-        axes[r, 0].imshow(src)
-        axes[r, 1].imshow(rgb, interpolation="nearest")
-        axes[r, 0].set_ylabel(label, fontsize=12)
-        for c in range(2):
+        axes[0, c].imshow(src)
+        axes[0, c].set_title(label, fontsize=12)
+        axes[1, c].imshow(rgb, interpolation="nearest")
+        for r in range(2):
             axes[r, c].set_xticks([])
             axes[r, c].set_yticks([])
 
+    axes[0, 0].set_ylabel("source", fontsize=12)
+    axes[1, 0].set_ylabel("ResNet-50 layer -1", fontsize=12)
     fig.tight_layout(pad=1.0)
     fig.savefig(HERE / "resnet50.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
