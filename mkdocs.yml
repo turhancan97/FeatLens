@@ -49,7 +49,7 @@ plugins:
 extra:
   analytics:
     provider: google
-    property: G-TFXSWFNDXJ
+    property: G-KSQFL03NZE
 
 extra_css:
   - stylesheets/extra.css
