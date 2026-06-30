@@ -292,14 +292,22 @@ One-time setup on PyPI: add a *trusted publisher* for the project (Account → P
 owner `turhancan97`, repository `FeatLens`, workflow `publish.yml`, environment `pypi`. PyPI
 supports a *pending* publisher so the very first release can also go through Actions.
 
-Then cut a release by pushing a tag:
+Then cut a release. Bump the version in **all four** places and push a tag:
+
+1. `pyproject.toml` — `version`
+2. `featlens/__init__.py` — `__version__`
+3. `CITATION.cff` — `version` **and** `date-released`
+4. `CHANGELOG.md` — promote `[Unreleased]` to the new dated section and update the compare links
 
 ```bash
-# bump the version in pyproject.toml first, then:
-git tag v0.1.0 && git push origin v0.1.0
+# after the four bumps above:
+git commit -am "Release v0.3.3"
+git tag v0.3.3 && git push origin v0.3.3
 ```
 
-The workflow builds the sdist + wheel, runs `twine check`, and uploads to PyPI.
+The workflow builds the sdist + wheel, runs `twine check`, and uploads to PyPI. Keeping
+`CITATION.cff` in step means the "Cite this repository" metadata always matches the released
+version.
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Citation
 

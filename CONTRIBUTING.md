@@ -54,6 +54,20 @@ Please include:
 - a minimal reproducible snippet, and
 - the full traceback.
 
+## Releasing (maintainers)
+
+Cutting a release means bumping the version in **four** places, then pushing a `vX.Y.Z` tag (which
+triggers `.github/workflows/publish.yml` → PyPI):
+
+1. `pyproject.toml` — `version`
+2. `featlens/__init__.py` — `__version__`
+3. `CITATION.cff` — `version` **and** `date-released` (keeps the "Cite this repository" metadata
+   matching the release)
+4. `CHANGELOG.md` — promote `[Unreleased]` to a new dated section and update the compare links
+
+Then `git tag vX.Y.Z && git push origin vX.Y.Z`. Pushing a new GitHub Release also lets Zenodo mint
+a per-version DOI.
+
 ## License
 
 By contributing you agree that your contributions are licensed under the project's

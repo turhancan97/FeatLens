@@ -33,6 +33,19 @@ pip install pytest mkdocs-material mkdocstrings[python]
   to a valid `[B, L, D, h, w]` stack (see `tests/test_smoke.py`).
 - Keep changes focused and match the surrounding style.
 
+## Releasing (maintainers)
+
+Cutting a release means bumping the version in **four** places, then pushing a `vX.Y.Z` tag (which
+triggers `publish.yml` → PyPI):
+
+1. `pyproject.toml` — `version`
+2. `featlens/__init__.py` — `__version__`
+3. `CITATION.cff` — `version` **and** `date-released` (keeps the "Cite this repository" metadata
+   matching the release)
+4. `CHANGELOG.md` — promote `[Unreleased]` to a new dated section and update the compare links
+
+Pushing a new GitHub Release also lets Zenodo mint a per-version DOI.
+
 ## License
 
 By contributing you agree that your contributions are licensed under the project's
