@@ -20,9 +20,10 @@ for name in HERO_NAMES:
     ll.visualize("timm:vit_small_patch8_224.dino", IMAGES / f"{name}.jpg", layers=[2, 5, 8, 11],
                  img_size=768, out=HERE / f"feat_{name}.png")
 
-# 2) Compare models at the final layer (per-tile basis).
-ll.compare(["dino_vitb16", "dinov2_vitb14", "clip_large_openai"], IMAGES / "cat.jpg",
-           layer=-1, out=HERE / "compare_models.png")
+# 2) Compare models at the final layer (per-tile basis). Use the higher-resolution cat source and
+#    a larger model input so the feature grids are denser and the gallery image reads more cleanly.
+ll.compare(["dino_vitb16", "dinov2_vitb14", "clip_large_openai"], IMAGES / "cat_hires.jpg",
+           layer=-1, img_size=448, out=HERE / "compare_models.png")
 
 # 2b) Same scene, six ViT-B/16 backbones: last-layer PCA maps at 1024px (a 64x64 grid). Same
 #     architecture and patch size throughout, so the differences are purely the training objective.
@@ -44,9 +45,10 @@ def _compare_b16_market():
 
 _compare_b16_market()
 
-# 3) Full model x layer grid, overlaid on the source image.
-ll.grid(["dino_vitb16", "dinov2_vitb14"], IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
-        out=HERE / "grid_overlay.png", overlay=True)
+# 3) Full model x layer grid, overlaid on the source image. Again use the higher-resolution cat
+#    and a larger input size so the overlaid tiles have more spatial detail.
+ll.grid(["dino_vitb16", "dinov2_vitb14"], IMAGES / "cat_hires.jpg", layers=[2, 5, 8, 11],
+        img_size=448, out=HERE / "grid_overlay.png", overlay=True)
 
 # 3b) v0.2 methods on one DINOv2 row across layers: cosine / k-means / foreground / saliency.
 ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
@@ -62,19 +64,35 @@ ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
 ll.attention("dino_vitb16", IMAGES / "cat_hires.jpg", layer=-1, img_size=448, overlay=True,
              out=HERE / "attention_rollout.png")
 
-# 3c-vid) Multi-frame video: a synthetic horizontal "pan" across market.jpg -> filmstrip + GIF.
+# 3c-vid) Multi-frame video: a synthetic horizontal "pan" across market.jpg -> filmstrip + GIF,
+#         plus a side-by-side GIF of the input frame next to its (per-frame) DINOv2 feature map.
 def _video_filmstrip():
     import tempfile
+    import numpy as np
     from PIL import Image
     src = Image.open(IMAGES / "market.jpg").convert("RGB")
     W, H = src.size
     cw, n = int(W * 0.55), 6
+    crops = []
     with tempfile.TemporaryDirectory() as d:
         for i in range(n):
             x = round(i * (W - cw) / (n - 1))
-            src.crop((x, 0, x + cw, H)).save(Path(d) / f"frame_{i:02d}.jpg")
-        ll.video("dinov2_vitb14", d, layers=[-1], n_frames=n, method="pca", img_size=448,
-                 out=HERE / "video_filmstrip.png")
+            crop = src.crop((x, 0, x + cw, H))
+            crop.save(Path(d) / f"frame_{i:02d}.jpg")
+            crops.append(crop)
+        res = ll.video("dinov2_vitb14", d, layers=[-1], n_frames=n, method="pca", img_size=448,
+                       out=HERE / "video_filmstrip.png", return_data=True)
+    # The 2D path runs each frame independently, so input frame i lines up 1:1 with feature step i.
+    feat = np.asarray(res["frames_rgb"])[-1]            # [n, disp, disp, 3] in [0, 1]
+    disp = feat.shape[1]
+    gap = np.ones((disp, 6, 3), np.float32)
+    combo = []
+    for i in range(feat.shape[0]):
+        im = np.asarray(crops[i].resize((disp, disp), Image.LANCZOS), np.float32) / 255.0
+        pair = np.concatenate([im, gap, feat[i]], axis=1)
+        combo.append(Image.fromarray((np.clip(pair, 0, 1) * 255).astype(np.uint8)))
+    combo[0].save(HERE / "video_filmstrip_compare.gif", save_all=True, append_images=combo[1:],
+                  duration=250, loop=0, optimize=True)
 
 _video_filmstrip()
 
@@ -92,6 +110,8 @@ from featlens.adapters import custom_adapter
 resnet = torchvision.models.resnet50(weights="DEFAULT")
 trunk = nn.Sequential(*list(resnet.children())[:-2])  # -> [B, 2048, h, w]
 lm = custom_adapter.load(trunk, patch_size=32, feature_fn=lambda m, x: m(x), name="resnet50")
-ll.FeatureGrid([FeatureExtractor(lm)]).render(IMAGES / "cat.jpg", out_path=HERE / "resnet50.png")
+ll.FeatureGrid([FeatureExtractor(lm, img_size=448)]).render(
+    IMAGES / "cat_hires.jpg", out_path=HERE / "resnet50.png"
+)
 
 print(f"Wrote gallery to {HERE}")

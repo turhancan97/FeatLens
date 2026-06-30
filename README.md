@@ -42,11 +42,11 @@ and method figures further down use DINO ViT-B/16 at the default 224px.
 | `cat_hires.jpg` · 1600×1200 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/cat_hires.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat_hires.png" width="430"> |
 | `market.jpg` · 1600×1063 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/market.jpg" width="110"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_market.png" width="430"> |
 
-**`grid(...)` — model × layer, overlaid on the image** (DINO vs DINOv2 across layers 2/5/8/11):
+**`grid(...)` — model × layer, overlaid on `cat_hires.jpg` at 448px** (DINO vs DINOv2 across layers 2/5/8/11):
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/grid_overlay.png" alt="model x layer grid overlay" width="100%"></p>
 
-**`compare(...)` — models at the final layer** &nbsp;|&nbsp; **`custom_adapter` — a ResNet-50 (CNN escape hatch)**
+**`compare(...)` — models at the final layer on `cat_hires.jpg` at 448px** &nbsp;|&nbsp; **`custom_adapter` — a ResNet-50 (CNN escape hatch) on the same image**
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models at last layer" height="320">
@@ -87,6 +87,10 @@ photo→illustration domain gap:
 synthetic pan across `market.jpg`, with DINOv2 last-layer PCA features tracking the scene:
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip.png" alt="video filmstrip" width="100%"></p>
+
+Played back as the **input clip beside its feature map** (left: source frames, right: DINOv2 PCA):
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip_compare.gif" alt="input clip next to DINOv2 feature map" width="60%"></p>
 
 For a **temporal** model the whole clip is fed *once* and the spatiotemporal tokens are split back
 into per-time-step grids. Here **V-JEPA 2.1** (ViT-B/16) on a real cockatoo clip, last layer, one

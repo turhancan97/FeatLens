@@ -42,11 +42,11 @@ resolution gives a fine **96×96** grid, so thin structures stay crisp:
 | `cat_hires.jpg` · 1600×1200 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/cat_hires.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_cat_hires.png" width="420"> |
 | `market.jpg` · 1600×1063 | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/images/market.jpg" width="100"> | <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/feat_market.png" width="420"> |
 
-**`grid(...)` — model × layer, overlaid on the image:**
+**`grid(...)` — model × layer, overlaid on `cat_hires.jpg` at 448px:**
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/grid_overlay.png" alt="model x layer grid overlay" width="100%"></p>
 
-**`compare(...)` — models at the final layer** &nbsp;|&nbsp; **a ResNet-50 (CNN escape hatch):**
+**`compare(...)` — models at the final layer on `cat_hires.jpg` at 448px** &nbsp;|&nbsp; **a ResNet-50 (CNN escape hatch) on the same image:**
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models" height="300">
@@ -68,6 +68,10 @@ while SigLIP, supervised, and Perception Encoder encode much higher-frequency de
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/attention_rollout.png" alt="attention rollout" height="240"><br>
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip.png" alt="video filmstrip" width="100%">
 </p>
+
+The same clip played back as the input frames beside their feature maps (left: source, right: DINOv2 PCA):
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip_compare.gif" alt="input clip next to DINOv2 feature map" width="60%"></p>
 
 A **temporal** model feeds the whole clip at once and splits the spatiotemporal tokens into
 per-time-step grids — here **V-JEPA 2.1** (ViT-B/16) on a real cockatoo clip, last layer, with one

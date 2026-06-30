@@ -9,6 +9,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
 ### Added
 - `examples/vjepa_video.py` now also writes `vjepa_video_compare.gif` — the input clip side by side
   with its V-JEPA feature map — added to the README and docs gallery.
+- `examples/quickstart.py` likewise writes `video_filmstrip_compare.gif` — the DINOv2 `video(...)`
+  clip beside its per-frame feature map — added to the README and docs gallery.
 
 ## [0.3.1] - 2026-06-30
 
