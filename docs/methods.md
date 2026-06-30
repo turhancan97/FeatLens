@@ -79,10 +79,14 @@ frames:
 ```python
 fl.video("dinov2_vitb14", "clip.mp4", layers=[5, 11], n_frames=16, out="strip.png")  # -> strip.png + strip.gif
 fl.video("dino_vitb16", "frames/", method="cosine", seed=(0.5, 0.5), n_frames=12)
+fl.video("vjepa2_1_vitb16", "clip.mp4", n_frames=16, img_size=384, out="strip.png")  # temporal V-JEPA
 ```
 
 Temporal models (V-JEPA) feed the whole clip once and split the spatiotemporal tokens into
-per-time-step grids; any other model runs each frame independently.
+per-time-step grids; any other model runs each frame independently. With `method="pca"` (the
+default) one PCA basis is shared across all frames (`share_pca=True`) so the colors stay consistent
+over time and motion is readable — set `share_pca=False` for an independent per-frame basis. A
+runnable end-to-end V-JEPA example is in [`examples/vjepa_video.py`](https://github.com/turhancan97/FeatLens/blob/main/examples/vjepa_video.py).
 
 ## Attention-rollout
 

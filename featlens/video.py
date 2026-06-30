@@ -23,7 +23,7 @@ from einops import rearrange
 
 from . import methods
 from .extractor import FeatureExtractor
-from .pca import get_pca_map
+from .pca import fit_pca_stats, get_pca_map
 
 PathLike = Union[str, Path]
 _VIDEO_EXTS = (".mp4", ".mov", ".avi", ".mkv", ".webm", ".gif")
@@ -68,9 +68,9 @@ def _interp_rgb(rgb: np.ndarray, size: int, method: str) -> np.ndarray:
     return F.interpolate(t, size=(size, size), mode=mode, **kw)[0].permute(1, 2, 0).numpy()
 
 
-def _colorize(fmap: torch.Tensor, method: str, seed, k, colormap) -> np.ndarray:
+def _colorize(fmap: torch.Tensor, method: str, seed, k, colormap, pca_stats=None) -> np.ndarray:
     if method == "pca":
-        return get_pca_map(fmap)
+        return get_pca_map(fmap, pca_stats=pca_stats)
     return methods.colorize(fmap, method, seed=seed, k=k, colormap=colormap)
 
 
@@ -92,12 +92,16 @@ def video(
     device: Optional[str] = None,
     resize_mode: str = "squash",
     interpolation_size: int = 224,
+    share_pca: bool = True,
     return_data: bool = False,
 ):
     """Render per-frame feature maps for a clip as a filmstrip PNG and an animated GIF.
 
     ``src`` is a video file (needs ``featlens[video]``) or a directory / glob / list of frames.
-    Returns the filmstrip path (or, with ``return_data=True``, a dict including ``frames_rgb``).
+    With ``method="pca"`` and ``share_pca=True`` (the default), one PCA basis is fit per layer
+    across *all* frames so the colors stay consistent over time and motion is readable; set
+    ``share_pca=False`` for an independent per-frame basis. Returns the filmstrip path (or, with
+    ``return_data=True``, a dict including ``frames_rgb``).
     """
     ex = FeatureExtractor(model, layers=list(layers) if layers else [-1], img_size=img_size,
                           pretrained=pretrained, resize_mode=resize_mode)
@@ -123,8 +127,12 @@ def video(
     # tiles[layer][step] -> interpolated RGB
     tiles = [[None] * n_steps for _ in range(n_layers)]
     for l in range(n_layers):
+        fmaps = [get_fmap(l, t).cpu() for t in range(n_steps)]
+        # Shared PCA basis across the row's frames keeps colors comparable over time.
+        pca_stats = (fit_pca_stats(torch.stack(fmaps, dim=0))
+                     if method == "pca" and share_pca and n_steps > 1 else None)
         for t in range(n_steps):
-            rgb = _colorize(get_fmap(l, t).cpu(), method, seed, k, colormap)
+            rgb = _colorize(fmaps[t], method, seed, k, colormap, pca_stats=pca_stats)
             tiles[l][t] = np.clip(_interp_rgb(rgb, interpolation_size, method), 0, 1)
 
     out_path = _filmstrip(tiles, [str(x) for x in ex.layers], n_steps, out) if out else None
