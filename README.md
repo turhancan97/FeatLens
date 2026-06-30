@@ -95,6 +95,10 @@ moves against the fixed perch — `python examples/vjepa_video.py`:
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/vjepa_video.png" alt="V-JEPA temporal filmstrip" width="100%"></p>
 
+Played back as the **input clip beside its feature map** (left: source frames, right: V-JEPA PCA):
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/vjepa_video_compare.gif" alt="input video next to V-JEPA feature map" width="60%"></p>
+
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Install
 
 ```bash

@@ -6,6 +6,10 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+- `examples/vjepa_video.py` now also writes `vjepa_video_compare.gif` — the input clip side by side
+  with its V-JEPA feature map — added to the README and docs gallery.
+
 ## [0.3.1] - 2026-06-30
 
 ### Added

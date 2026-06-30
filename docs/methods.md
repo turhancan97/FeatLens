@@ -86,7 +86,9 @@ Temporal models (V-JEPA) feed the whole clip once and split the spatiotemporal t
 per-time-step grids; any other model runs each frame independently. With `method="pca"` (the
 default) one PCA basis is shared across all frames (`share_pca=True`) so the colors stay consistent
 over time and motion is readable — set `share_pca=False` for an independent per-frame basis. A
-runnable end-to-end V-JEPA example is in [`examples/vjepa_video.py`](https://github.com/turhancan97/FeatLens/blob/main/examples/vjepa_video.py).
+runnable end-to-end V-JEPA example is in [`examples/vjepa_video.py`](https://github.com/turhancan97/FeatLens/blob/main/examples/vjepa_video.py)
+— it writes the filmstrip, the animated feature-map GIF, and a side-by-side GIF of the input clip
+next to its feature map.
 
 ## Attention-rollout
 

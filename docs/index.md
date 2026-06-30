@@ -74,3 +74,7 @@ per-time-step grids — here **V-JEPA 2.1** (ViT-B/16) on a real cockatoo clip, 
 shared PCA basis across frames so the moving bird stays color-coherent ([`examples/vjepa_video.py`](https://github.com/turhancan97/FeatLens/blob/main/examples/vjepa_video.py)):
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/vjepa_video.png" alt="V-JEPA temporal filmstrip" width="100%"></p>
+
+Played back as the input clip beside its feature map (left: source frames, right: V-JEPA PCA):
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/vjepa_video_compare.gif" alt="input video next to V-JEPA feature map" width="60%"></p>
