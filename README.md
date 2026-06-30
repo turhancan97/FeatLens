@@ -46,13 +46,13 @@ and the compare / method figures further down use DINO ViT-B/16 at 448px for a d
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/grid_overlay.png" alt="model x layer grid overlay" width="100%"></p>
 
-**`compare(...)` — models at the final layer on `cat_hires.jpg` at 448px** &nbsp;|&nbsp; **`custom_adapter` — a ResNet-50 (CNN escape hatch) on the same image**
+**`compare(...)` — models at the final layer on `cat_hires.jpg` at 448px:**
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models at last layer" height="320">
-  &nbsp;&nbsp;
-  <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" height="320">
-</p>
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models at last layer" width="100%"></p>
+
+**`custom_adapter` — a ResNet-50 (CNN escape hatch) on the same image:**
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" height="320"></p>
 
 **Same scene, six ViT-B/16 backbones** — `market.jpg` at 1024px, **last-layer** features (a 64×64
 grid), PCA→RGB per model. Architecture and patch size are held fixed, so the differences are purely
@@ -268,6 +268,17 @@ puts the repo on `sys.path`, builds the model, and hooks its blocks.
 
 The extraction core adapts the `FrozenBackbone` pattern; the PCA is adapted from the SpaRRTa
 feature-map script.
+
+## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Contributing
+
+**Contributions are welcome — this is an open-source project and we're happy to accept and support them.** Whether it's a new model adapter, a visualization method, a bug fix, docs, or just a question, please jump in:
+
+- 🐛 **Found a bug or have an idea?** [Open an issue](https://github.com/turhancan97/FeatLens/issues) — bug reports, feature requests, and questions are all welcome.
+- 🔧 **Want to send a change?** [Fork the repo](https://github.com/turhancan97/FeatLens/fork), create a branch, and [open a pull request](https://github.com/turhancan97/FeatLens/pulls). Small, focused PRs are easiest to review.
+- ✅ **Before you push:** run `pytest -q` and, for docs changes, `mkdocs build --strict`. New behavior should come with a test; new models should be verified to load and forward.
+- 💬 **Not sure where to start?** Open an issue describing what you'd like to do and we'll help you scope it.
+
+By contributing you agree that your contributions are licensed under the project's [MIT License](LICENSE).
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Releasing
 

@@ -11,6 +11,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
   with its V-JEPA feature map — added to the README and docs gallery.
 - `examples/quickstart.py` likewise writes `video_filmstrip_compare.gif` — the DINOv2 `video(...)`
   clip beside its per-frame feature map — added to the README and docs gallery.
+- **Contributing** section in the README and a new `docs/contributing.md` page (wired into the nav)
+  inviting issues and pull requests.
 
 ## [0.3.1] - 2026-06-30
 
