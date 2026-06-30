@@ -50,9 +50,9 @@ and the compare / method figures further down use DINO ViT-B/16 at 448px for a d
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_models.png" alt="compare models at last layer" width="100%"></p>
 
-**`custom_adapter` — a ResNet-50 (CNN escape hatch) on the same image:**
+**`custom_adapter` — a ResNet-50 (CNN escape hatch) across three images at 768px, each with its `layer -1` feature map:**
 
-<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" height="320"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/resnet50.png" alt="resnet50 feature map" width="100%"></p>
 
 **Same scene, six ViT-B/16 backbones** — `market.jpg` at 1024px, **last-layer** features (a 64×64
 grid), PCA→RGB per model. Architecture and patch size are held fixed, so the differences are purely

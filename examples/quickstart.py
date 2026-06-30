@@ -105,14 +105,43 @@ ll.correspond("dinov2_vitb14", IMAGES / "cat_hires.jpg", IMAGES / "cat_cartoon.j
 # 4) Bring your own model (escape hatch): any nn.Module via a feature_fn or hook target.
 import torch.nn as nn
 import torchvision
-from featlens import FeatureExtractor, FeatureGrid
+from featlens import FeatureExtractor, methods
 from featlens.adapters import custom_adapter
 
 resnet = torchvision.models.resnet50(weights="DEFAULT")
 trunk = nn.Sequential(*list(resnet.children())[:-2])  # -> [B, 2048, h, w]
 lm = custom_adapter.load(trunk, patch_size=32, feature_fn=lambda m, x: m(x), name="resnet50")
-ll.FeatureGrid([FeatureExtractor(lm, img_size=448)]).render(
-    IMAGES / "cat_hires.jpg", out_path=HERE / "resnet50.png"
-)
+
+
+def _resnet_gallery():
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    names = [("cat_hires", "Cat"), ("peacock", "Peacock"), ("market", "Market")]
+    ex = FeatureExtractor(lm, img_size=768)
+    fig, axes = plt.subplots(len(names), 2, figsize=(9.2, 13.2))
+    axes[0, 0].set_title("source", fontsize=12)
+    axes[0, 1].set_title("ResNet-50 layer -1", fontsize=12)
+
+    for r, (stem, label) in enumerate(names):
+        img_path = IMAGES / f"{stem}.jpg"
+        with Image.open(img_path).convert("RGB") as pil:
+            src = ex.denormalize(ex.transform(pil))
+        feats = ex.forward(ex.load_images([img_path]))  # [1, 1, D, h, w]
+        rgb = methods.colorize(feats[0, 0].permute(1, 2, 0), "pca")
+
+        axes[r, 0].imshow(src)
+        axes[r, 1].imshow(rgb, interpolation="nearest")
+        axes[r, 0].set_ylabel(label, fontsize=12)
+        for c in range(2):
+            axes[r, c].set_xticks([])
+            axes[r, c].set_yticks([])
+
+    fig.tight_layout(pad=1.0)
+    fig.savefig(HERE / "resnet50.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+
+_resnet_gallery()
 
 print(f"Wrote gallery to {HERE}")
