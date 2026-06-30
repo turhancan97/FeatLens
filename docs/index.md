@@ -68,3 +68,9 @@ while SigLIP, supervised, and Perception Encoder encode much higher-frequency de
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/attention_rollout.png" alt="attention rollout" height="240"><br>
   <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip.png" alt="video filmstrip" width="100%">
 </p>
+
+A **temporal** model feeds the whole clip at once and splits the spatiotemporal tokens into
+per-time-step grids — here **V-JEPA 2.1** (ViT-B/16) on a real cockatoo clip, last layer, with one
+shared PCA basis across frames so the moving bird stays color-coherent ([`examples/vjepa_video.py`](https://github.com/turhancan97/FeatLens/blob/main/examples/vjepa_video.py)):
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/vjepa_video.png" alt="V-JEPA temporal filmstrip" width="100%"></p>

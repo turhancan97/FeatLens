@@ -6,6 +6,16 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+- **V-JEPA video example** — `examples/vjepa_video.py` runs the temporal V-JEPA 2.1 path end-to-end
+  on a real bundled clip (`examples/videos/cockatoo.mp4`), producing the new `vjepa_video.png`
+  filmstrip / GIF in the README gallery.
+
+### Changed
+- `featlens.video(..., method="pca")` now fits **one PCA basis shared across all frames** by default
+  (`share_pca=True`) so colors stay consistent over time and motion is readable; pass
+  `share_pca=False` for the previous independent per-frame basis.
+
 ## [0.3.0] - 2026-06-29
 
 ### Added

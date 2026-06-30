@@ -88,6 +88,13 @@ synthetic pan across `market.jpg`, with DINOv2 last-layer PCA features tracking 
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/video_filmstrip.png" alt="video filmstrip" width="100%"></p>
 
+For a **temporal** model the whole clip is fed *once* and the spatiotemporal tokens are split back
+into per-time-step grids. Here **V-JEPA 2.1** (ViT-B/16) on a real cockatoo clip, last layer, one
+**shared PCA basis across frames** so the colors stay consistent and the bird (centre) reads as it
+moves against the fixed perch — `python examples/vjepa_video.py`:
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/vjepa_video.png" alt="V-JEPA temporal filmstrip" width="100%"></p>
+
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Install
 
 ```bash
@@ -116,6 +123,7 @@ ll.batch("dino_vitb16", "photos/", "out/", layers=[2, 5, 8, 11], montage="sheet.
 
 # Multi-frame video -> a filmstrip (frames x layers) + an animated GIF
 ll.video("dinov2_vitb14", "clip.mp4", layers=[5, 11], n_frames=16, out="strip.png")  # needs featlens[video]
+ll.video("vjepa2_1_vitb16", "clip.mp4", n_frames=16, out="strip.png")  # temporal: one clip, per-step grids
 
 # Attention-rollout: where is the [CLS] token looking? (timm ViTs)
 ll.attention("dino_vitb16", "img.jpg", layer=-1, overlay=True, out="attn.png")
