@@ -82,3 +82,25 @@ shared PCA basis across frames so the moving bird stays color-coherent ([`exampl
 Played back as the input clip beside its feature map (left: source frames, right: V-JEPA PCA):
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/vjepa_video_compare.gif" alt="input video next to V-JEPA feature map" width="60%"></p>
+
+## Citation
+
+If you use FeatLens in your research or project, please cite it
+([DOI: 10.5281/zenodo.21082489](https://doi.org/10.5281/zenodo.21082489)). GitHub's
+**"Cite this repository"** button (from
+[`CITATION.cff`](https://github.com/turhancan97/FeatLens/blob/main/CITATION.cff)) exports
+BibTeX/APA, or use:
+
+```bibtex
+@software{kargin_featlens,
+  author    = {Kargın, Turhan Can},
+  title     = {{FeatLens: Model-agnostic feature-map visualization for vision models}},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.21082489},
+  url       = {https://github.com/turhancan97/FeatLens}
+}
+```
+
+The concept DOI always resolves to the latest release; Zenodo also mints a per-version DOI each
+release.

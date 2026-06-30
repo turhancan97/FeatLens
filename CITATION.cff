@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use FeatLens in your work, please cite it as below."
+title: "FeatLens: Model-agnostic feature-map visualization for vision models"
+abstract: >-
+  FeatLens renders feature maps for any vision model (DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT,
+  V-JEPA, CNNs, ...) from any source (timm, HuggingFace transformers, torch.hub, external repos, or
+  your own model) and any layer, as a model x layer grid. It colors features by PCA, cosine
+  similarity, k-means, foreground masks, saliency, and attention-rollout, and supports cross-image
+  correspondence, batching, and video.
+type: software
+authors:
+  - family-names: "Kargın"
+    given-names: "Turhan Can"
+    orcid: "https://orcid.org/0000-0002-6751-4773"
+repository-code: "https://github.com/turhancan97/FeatLens"
+url: "https://turhancan97.github.io/FeatLens/"
+license: MIT
+version: 0.3.2
+date-released: "2026-06-30"
+doi: 10.5281/zenodo.21082489
+keywords:
+  - feature visualization
+  - representation learning
+  - vision transformers
+  - interpretability
+  - PCA
+  - DINO
+  - self-supervised learning

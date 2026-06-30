@@ -6,6 +6,10 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+- `CITATION.cff` (enables GitHub's "Cite this repository" button) and a Citation section with
+  BibTeX in the README and docs, with the Zenodo DOI `10.5281/zenodo.21082489` and a DOI badge.
+
 ## [0.3.2] - 2026-06-30
 
 ### Added
