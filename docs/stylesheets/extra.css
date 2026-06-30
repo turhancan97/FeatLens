@@ -4,3 +4,13 @@
   height: 2.2rem;
   width: 2.2rem;
 }
+
+/* Custom header color. #f2fabe is very pale, so pair it with dark header text/icons for
+   contrast. Scoped to the header (and the tabs bar, if ever enabled) so the rest of the site
+   keeps its indigo accents. */
+.md-header,
+.md-tabs {
+  --md-primary-fg-color: #f2fabe;
+  --md-primary-bg-color: #1b1b1b;                  /* title, icons, search text */
+  --md-primary-bg-color--light: rgba(0, 0, 0, 0.6); /* muted header text / placeholder */
+}
