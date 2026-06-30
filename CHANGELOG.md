@@ -6,6 +6,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-06-30
+
 ### Added
 - **V-JEPA video example** — `examples/vjepa_video.py` runs the temporal V-JEPA 2.1 path end-to-end
   on a real bundled clip (`examples/videos/cockatoo.mp4`), producing the new `vjepa_video.png`
@@ -138,7 +140,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/turhancan97/FeatLens/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/turhancan97/FeatLens/compare/v0.2.6...v0.3.0
 [0.2.6]: https://github.com/turhancan97/FeatLens/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/turhancan97/FeatLens/compare/v0.2.4...v0.2.5
