@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://github.com/turhancan97/FeatLens/actions/workflows/test.yml"><img src="https://github.com/turhancan97/FeatLens/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
   <a href="https://pypi.org/project/featlens/"><img src="https://img.shields.io/pypi/v/featlens" alt="PyPI"></a>
+  <a href="https://pepy.tech/projects/featlens"><img src="https://static.pepy.tech/badge/featlens" alt="PyPI downloads"></a>
   <a href="https://turhancan97.github.io/FeatLens/"><img src="https://img.shields.io/badge/docs-online-blue" alt="Docs"></a>
   <a href="https://huggingface.co/spaces/turhancan97/FeatLens-demo"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Demo-Spaces-yellow" alt="Hugging Face Space"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
