@@ -6,6 +6,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-06-30
+
 ### Added
 - `examples/vjepa_video.py` now also writes `vjepa_video_compare.gif` — the input clip side by side
   with its V-JEPA feature map — added to the README and docs gallery.
@@ -13,6 +15,10 @@ All notable changes to **FeatLens** are documented here. The format is based on
   clip beside its per-frame feature map — added to the README and docs gallery.
 - **Contributing** section in the README, a new `docs/contributing.md` page (wired into the nav),
   and a root `CONTRIBUTING.md` contributor guide — inviting issues and pull requests.
+
+### Changed
+- Gallery `compare` and ResNet-50 figures are laid out horizontally (a 1×3 model row and a 2×3
+  source/feature grid) so they read at full width instead of as tall portrait strips.
 
 ### Fixed
 - The `featlens[all]` extra now includes the `video` dependencies (`imageio`, `imageio-ffmpeg`), so
@@ -153,7 +159,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/turhancan97/FeatLens/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/turhancan97/FeatLens/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/turhancan97/FeatLens/compare/v0.2.6...v0.3.0
 [0.2.6]: https://github.com/turhancan97/FeatLens/compare/v0.2.5...v0.2.6
