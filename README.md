@@ -9,7 +9,7 @@
   <a href="https://turhancan97.github.io/FeatLens/"><img src="https://img.shields.io/badge/docs-online-blue" alt="Docs"></a>
   <a href="https://huggingface.co/spaces/turhancan97/FeatLens-demo"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Demo-Spaces-yellow" alt="Hugging Face Space"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://doi.org/10.5281/zenodo.21082489"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21082489.svg" alt="DOI"></a>
+  <a href="https://doi.org/10.5281/zenodo.21082488"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21082488.svg" alt="DOI"></a>
 </p>
 
 📖 **Documentation:** https://turhancan97.github.io/FeatLens/ &nbsp;·&nbsp; 🤗 **Live demo:** https://huggingface.co/spaces/turhancan97/FeatLens-demo
@@ -321,12 +321,12 @@ button (from [`CITATION.cff`](CITATION.cff)) exports BibTeX/APA, or use:
   title     = {{FeatLens: Model-agnostic feature-map visualization for vision models}},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.21082489},
+  doi       = {10.5281/zenodo.21082488},
   url       = {https://github.com/turhancan97/FeatLens}
 }
 ```
 
-The DOI [`10.5281/zenodo.21082489`](https://doi.org/10.5281/zenodo.21082489) always resolves to the
+The DOI [`10.5281/zenodo.21082488`](https://doi.org/10.5281/zenodo.21082488) always resolves to the
 latest release; Zenodo also mints a per-version DOI for each release.
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> License

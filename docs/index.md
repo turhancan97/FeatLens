@@ -86,7 +86,7 @@ Played back as the input clip beside its feature map (left: source frames, right
 ## Citation
 
 If you use FeatLens in your research or project, please cite it
-([DOI: 10.5281/zenodo.21082489](https://doi.org/10.5281/zenodo.21082489)). GitHub's
+([DOI: 10.5281/zenodo.21082488](https://doi.org/10.5281/zenodo.21082488)). GitHub's
 **"Cite this repository"** button (from
 [`CITATION.cff`](https://github.com/turhancan97/FeatLens/blob/main/CITATION.cff)) exports
 BibTeX/APA, or use:
@@ -97,7 +97,7 @@ BibTeX/APA, or use:
   title     = {{FeatLens: Model-agnostic feature-map visualization for vision models}},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.21082489},
+  doi       = {10.5281/zenodo.21082488},
   url       = {https://github.com/turhancan97/FeatLens}
 }
 ```
