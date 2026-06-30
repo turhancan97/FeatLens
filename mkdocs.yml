@@ -46,6 +46,11 @@ plugins:
             separate_signature: true
             docstring_section_style: table
 
+extra:
+  analytics:
+    provider: google
+    property: G-TFXSWFNDXJ
+
 extra_css:
   - stylesheets/extra.css
 
