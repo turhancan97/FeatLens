@@ -14,6 +14,11 @@ All notable changes to **FeatLens** are documented here. The format is based on
 - **Contributing** section in the README, a new `docs/contributing.md` page (wired into the nav),
   and a root `CONTRIBUTING.md` contributor guide — inviting issues and pull requests.
 
+### Fixed
+- The `featlens[all]` extra now includes the `video` dependencies (`imageio`, `imageio-ffmpeg`), so
+  `pip install "featlens[all]"` can read video files for `featlens.video`. Documented the `[video]`
+  extra in the installation table.
+
 ## [0.3.1] - 2026-06-30
 
 ### Added

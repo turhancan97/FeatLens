@@ -31,7 +31,7 @@ dependencies = [
 timm = ["timm>=0.9"]
 hf = ["transformers>=4.30"]
 clip = ["open_clip_torch>=2.20"]
-all = ["timm>=0.9", "transformers>=4.30", "open_clip_torch>=2.20"]
+all = ["timm>=0.9", "transformers>=4.30", "open_clip_torch>=2.20", "imageio>=2.30", "imageio-ffmpeg>=0.4"]
 demo = ["gradio>=4.0"]
 video = ["imageio>=2.30", "imageio-ffmpeg>=0.4"]
 docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.24"]

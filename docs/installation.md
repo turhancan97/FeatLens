@@ -13,6 +13,7 @@ Model backends are optional extras — install only what you need:
 | `featlens[timm]` | timm models (DINO, DINOv2/v3, CLIP, SigLIP, DeiT, …) |
 | `featlens[hf]` | HuggingFace `transformers` models |
 | `featlens[clip]` | `open_clip` |
+| `featlens[video]` | reading `.mp4`/video files for `featlens.video` (`imageio`) |
 | `featlens[all]` | all of the above |
 
 ```bash
