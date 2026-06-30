@@ -32,7 +32,7 @@ foreground), so you can point it at a new model in seconds and compare models/la
 All produced by `examples/quickstart.py`. The per-image rows below use **DINO ViT-S/8 at 768px**
 — a small *patch-8* backbone at high resolution gives a fine **96×96** feature grid, so thin
 structures (whiskers, feather barbs, individual fruit) stay crisp. The model × layer, `compare`
-and method figures further down use DINO ViT-B/16 at the default 224px.
+and the compare / method figures further down use DINO ViT-B/16 at 448px for a denser feature grid.
 
 **`visualize(...)` — DINO ViT-S/8 @ 768px, feature maps across layers 2 / 5 / 8 / 11:**
 
@@ -61,7 +61,7 @@ low-frequency, while SigLIP, supervised, and Perception Encoder encode much high
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_b16_market.png" alt="six ViT-B/16 backbones compared on one image" width="100%"></p>
 
-**Beyond PCA** — the same DINOv2 row, recolored by **cosine-similarity** to a seed patch,
+**Beyond PCA** — the same DINOv2 row on `cat_hires.jpg` at 448px, recolored by **cosine-similarity** to a seed patch,
 **k-means** segmentation, a **foreground** mask, and **saliency** (activation magnitude) — across
 layers 2 / 5 / 8 / 11:
 

@@ -51,14 +51,15 @@ ll.grid(["dino_vitb16", "dinov2_vitb14"], IMAGES / "cat_hires.jpg", layers=[2, 5
         img_size=448, out=HERE / "grid_overlay.png", overlay=True)
 
 # 3b) v0.2 methods on one DINOv2 row across layers: cosine / k-means / foreground / saliency.
-ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
-             method="cosine", seed=(0.5, 0.45), out=HERE / "method_cosine.png")
-ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
-             method="kmeans", k=6, out=HERE / "method_kmeans.png")
-ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
-             method="foreground", out=HERE / "method_foreground.png")
-ll.visualize("dinov2_vitb14", IMAGES / "cat.jpg", layers=[2, 5, 8, 11],
-             method="saliency", out=HERE / "method_saliency.png")
+#     Use the higher-resolution cat and a larger input so the patch-grid methods read more crisply.
+ll.visualize("dinov2_vitb14", IMAGES / "cat_hires.jpg", layers=[2, 5, 8, 11],
+             method="cosine", seed=(0.5, 0.45), img_size=448, out=HERE / "method_cosine.png")
+ll.visualize("dinov2_vitb14", IMAGES / "cat_hires.jpg", layers=[2, 5, 8, 11],
+             method="kmeans", k=6, img_size=448, out=HERE / "method_kmeans.png")
+ll.visualize("dinov2_vitb14", IMAGES / "cat_hires.jpg", layers=[2, 5, 8, 11],
+             method="foreground", img_size=448, out=HERE / "method_foreground.png")
+ll.visualize("dinov2_vitb14", IMAGES / "cat_hires.jpg", layers=[2, 5, 8, 11],
+             method="saliency", img_size=448, out=HERE / "method_saliency.png")
 
 # 3c-att) Attention-rollout (timm ViT): where is the [CLS] token looking? (overlaid on the cat)
 ll.attention("dino_vitb16", IMAGES / "cat_hires.jpg", layer=-1, img_size=448, overlay=True,
