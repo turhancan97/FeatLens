@@ -88,8 +88,9 @@ We chose to build a separate package rather than contribute to these projects be
 of FeatLens is a *cross-library* abstraction: one adapter interface spanning timm, Transformers,
 `torch.hub`, external repositories and user-defined modules, which none of those projects has a
 reason to own. Attribution libraries are organized around gradients with respect to a model
-output, whereas FeatLens needs only forward features and is deliberately gradient-free. FeatLens
-reuses these libraries as backends instead of reimplementing them.
+output, whereas FeatLens needs only forward features and is deliberately gradient-free. For
+loading models, FeatLens uses timm, Transformers and `torch.hub` as backends rather than
+reimplementing them.
 
 # Software design
 
