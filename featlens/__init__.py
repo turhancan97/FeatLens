@@ -10,9 +10,11 @@ Quick start::
     ll.visualize("dinov2_vitb14", "img.jpg", layers=[2, 5, 8, 11], out="row.png")   # scrub layers
     ll.compare(["dino_vitb16", "mae_vitb16"], "img.jpg", layer=-1, out="cmp.png")    # compare models
 
-v0.2 adds non-PCA views (``method="cosine"|"kmeans"|"foreground"``), an opt-in feature
-``cache=True``, :func:`correspond` for cross-image patch matching, and :func:`batch` to render a
-whole directory (one figure per image).
+Beyond PCA, features can be colored with ``method="cosine"|"kmeans"|"foreground"|"saliency"``.
+Also available: :func:`correspond` (cross-image patch matching), :func:`batch` (render a whole
+directory, with an optional contact-sheet montage), :func:`video` (per-frame filmstrip + GIF;
+temporal models such as V-JEPA process the clip in one pass), :func:`attention` (attention rollout
+for timm ViTs), and an opt-in on-disk feature cache (``cache=True``).
 """
 
 from typing import Optional, Sequence, Union
