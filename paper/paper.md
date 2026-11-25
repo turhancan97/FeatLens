@@ -14,10 +14,8 @@ authors:
     corresponding: true
     affiliation: 1
 affiliations:
-  # TODO: confirm the exact affiliation wording (faculty / doctoral school) and its ROR id.
-  - name: Jagiellonian University, Kraków, Poland
+  - name: Independent Researcher
     index: 1
-    ror: 03bqmcz70
 date: 25 November 2026
 bibliography: paper.bib
 ---
