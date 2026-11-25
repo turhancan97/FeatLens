@@ -12,7 +12,7 @@
   <a href="https://doi.org/10.5281/zenodo.21082488"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21082488.svg" alt="DOI"></a>
 </p>
 
-📖 **Documentation:** https://turhancan97.github.io/FeatLens/ &nbsp;·&nbsp; 🤗 **Live demo:** https://huggingface.co/spaces/turhancan97/FeatLens-demo
+📖 **Documentation:** https://turhancan97.github.io/FeatLens/ &nbsp;·&nbsp; 🎬 **[Video explainer](https://turhancan97.github.io/FeatLens/#video-explainer)** &nbsp;·&nbsp; 🤗 **Live demo:** https://huggingface.co/spaces/turhancan97/FeatLens-demo
 
 **See what any vision model encodes.** FeatLens renders **feature maps** for
 **any** vision model — DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT, V-JEPA, CNNs, … — loaded from
@@ -30,6 +30,13 @@ Most "DINO PCA" scripts are welded to one model. FeatLens separates **representa
 (a small adapter layer over the model zoo) from **visualization** (PCA / cosine / k-means /
 foreground / saliency / attention-rollout), so you can point it at a new model in seconds and
 compare models/layers side by side.
+
+**New to feature maps?** Watch the 3-minute narrated explainer (subtitled) — click to play it on
+the docs site:
+
+<p align="center">
+  <a href="https://turhancan97.github.io/FeatLens/#video-explainer"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/docs/assets/video/thumbnail.jpg" alt="How FeatLens works — 3-minute narrated explainer" width="70%"></a>
+</p>
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Gallery
 

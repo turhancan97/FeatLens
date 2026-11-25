@@ -31,6 +31,22 @@ fl.grid(["dino_vitb16", "dinov2_vitb14"], "img.jpg", layers=[2, 5, 8, 11], overl
 [Get started →](installation.md){ .md-button .md-button--primary }
 [API reference →](api.md){ .md-button }
 
+## Video explainer
+
+A 3-minute narrated walkthrough of how FeatLens works: patches → tokens → a hooked layer →
+a dense feature grid, robust PCA to RGB, the other coloring methods, cross-image
+correspondence, backbone comparison and video. Every feature map in it is a real FeatLens
+output; subtitles are on.
+
+<video controls preload="metadata" poster="assets/video/poster.jpg" width="100%">
+  <source src="assets/video/featlens_explainer.mp4" type="video/mp4">
+  Your browser can't play this video —
+  <a href="assets/video/featlens_explainer.mp4">download the MP4</a>.
+</video>
+
+<small>Made with Manim and Kokoro-82M narration; the source is in
+[`video/`](https://github.com/turhancan97/FeatLens/tree/main/video).</small>
+
 ## Gallery
 
 DINO ViT-S/8 @ 768px feature maps across layers 2 / 5 / 8 / 11 — a *patch-8* backbone at high
