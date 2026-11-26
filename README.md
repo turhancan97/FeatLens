@@ -288,7 +288,7 @@ feature-map script.
 - ✅ **Before you push:** run `pytest -q` and, for docs changes, `mkdocs build --strict`. New behavior should come with a test; new models should be verified to load and forward.
 - 💬 **Not sure where to start?** Open an issue describing what you'd like to do and we'll help you scope it.
 
-Need help? See [SUPPORT.md](SUPPORT.md) for where to ask and what to expect. [GOVERNANCE.md](GOVERNANCE.md) explains who maintains FeatLens and how decisions are made.
+Need help? See [SUPPORT.md](SUPPORT.md) for where to ask and what to expect. [GOVERNANCE.md](GOVERNANCE.md) explains who maintains FeatLens and how decisions are made. Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 By contributing you agree that your contributions are licensed under the project's [MIT License](LICENSE).
 

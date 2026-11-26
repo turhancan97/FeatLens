@@ -24,6 +24,8 @@ documentation, the PyPI package and the live demo up to date.
   arguments are weighed on their merits.
 - The lead maintainer makes the final decision when there is no consensus, and explains the
   reasoning on the issue or pull request.
+- All project spaces follow the [Code of Conduct](CODE_OF_CONDUCT.md), which the maintainers
+  enforce.
 
 ## Project scope
 

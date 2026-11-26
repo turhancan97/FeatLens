@@ -19,6 +19,9 @@ a question, please jump in. Thank you for helping make FeatLens better! 🎉
 For questions and support, see [SUPPORT.md](SUPPORT.md). For who maintains the project and how
 decisions are made, see [GOVERNANCE.md](GOVERNANCE.md).
 
+Everyone taking part in FeatLens is expected to follow our
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Development setup
 
 ```bash

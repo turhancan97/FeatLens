@@ -14,6 +14,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
 - `SUPPORT.md` (where to get help, what to expect, how to report security issues) and
   `GOVERNANCE.md` (maintainers, decision-making, releases, becoming a maintainer), plus a
   *Support & governance* docs page.
+- Issue forms (bug report, model/source support, feature request, question) and a
+  Contributor Covenant 2.1 `CODE_OF_CONDUCT.md`.
 
 ## [0.3.2] - 2026-06-30
 

@@ -16,7 +16,9 @@ or just a question, please jump in. This page mirrors the repository's
   scope it. Good first contributions include a new entry in the
   [model registry](models.md), a new [visualization method](methods.md), or docs improvements.
 
-For questions and who maintains the project, see [Support & governance](support.md).
+For questions and who maintains the project, see [Support & governance](support.md). Everyone
+taking part is expected to follow the
+[Code of Conduct](https://github.com/turhancan97/FeatLens/blob/main/CODE_OF_CONDUCT.md).
 
 ## Development setup
 
