@@ -165,9 +165,6 @@ and validated all AI-assisted code, documentation and text.
 
 # Acknowledgements
 
-<!-- TODO: funding sources (grant numbers) and whether funders were involved; computing
-     resources if relevant; people who gave feedback. If there was no funding, say so. -->
-
-TODO: acknowledge funding and computing resources, or state that there was no specific funding.
+This work received no specific funding.
 
 # References
