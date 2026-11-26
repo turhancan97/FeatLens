@@ -108,7 +108,7 @@ BibTeX/APA, or use:
 
 ```bibtex
 @software{kargin_featlens,
-  author    = {Kargın, Turhan Can},
+  author    = {Kargin, Turhan Can},
   title     = {{FeatLens: Model-agnostic feature-map visualization for vision models}},
   year      = {2026},
   publisher = {Zenodo},

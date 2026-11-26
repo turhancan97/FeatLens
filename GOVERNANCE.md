@@ -7,7 +7,7 @@ the project grows.
 
 | Maintainer | GitHub | Role |
 |---|---|---|
-| Turhan Can Kargın | [turhancan97](https://github.com/turhancan97) | Creator and lead maintainer |
+| Turhan Can Kargin | [turhancan97](https://github.com/turhancan97) | Creator and lead maintainer |
 
 FeatLens is currently maintained by one person, on a best-effort basis alongside research work.
 The maintainer reviews and merges pull requests, triages issues, cuts releases, and keeps the

@@ -24,7 +24,7 @@ rather than in a public issue.
 
 ## Who maintains FeatLens
 
-FeatLens is created and maintained by Turhan Can Kargın
+FeatLens is created and maintained by Turhan Can Kargin
 ([@turhancan97](https://github.com/turhancan97)), on a best-effort basis.
 
 - Small changes are decided in their pull request or issue. Larger changes (new backends or

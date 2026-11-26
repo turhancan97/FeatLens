@@ -9,7 +9,7 @@ abstract: >-
   correspondence, batching, and video.
 type: software
 authors:
-  - family-names: "Kargın"
+  - family-names: "Kargin"
     given-names: "Turhan Can"
     orcid: "https://orcid.org/0000-0002-6751-4773"
 repository-code: "https://github.com/turhancan97/FeatLens"
