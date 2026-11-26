@@ -15,8 +15,8 @@ authors:
 repository-code: "https://github.com/turhancan97/FeatLens"
 url: "https://turhancan97.github.io/FeatLens/"
 license: MIT
-version: 0.3.2
-date-released: "2026-06-30"
+version: 0.3.3
+date-released: "2026-11-26"
 doi: 10.5281/zenodo.21082488
 keywords:
   - feature visualization

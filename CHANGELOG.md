@@ -6,6 +6,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-26
+
 ### Added
 - `CITATION.cff` (enables GitHub's "Cite this repository" button) and a Citation section with
   BibTeX in the README and docs, with the Zenodo DOI `10.5281/zenodo.21082488` and a DOI badge.
@@ -16,6 +18,21 @@ All notable changes to **FeatLens** are documented here. The format is based on
   *Support & governance* docs page.
 - Issue forms (bug report, model/source support, feature request, question) and a
   Contributor Covenant 2.1 `CODE_OF_CONDUCT.md`.
+- A GitHub social-preview image (`assets/social_preview.png`) and the script that generates it.
+
+### Changed
+- The README and docs now describe MAE's last layer in the six-backbone comparison accurately:
+  broad vertical color bands that follow horizontal position, not "low-frequency" scene content.
+- The author's surname is spelled "Kargin" consistently in the package metadata, `LICENSE`,
+  `CITATION.cff` and the docs.
+- The `featlens` module docstring describes the current feature set (video, attention, saliency,
+  batch montage).
+- The demo requires `featlens>=0.3.2`, since it offers the `saliency` method.
+
+### Fixed
+- The changelog cited the version DOI instead of the Zenodo concept DOI.
+- The contributing guide pointed to the wrong file for `test_depth_for_every_registry_model`
+  (it lives in `tests/test_demo.py`).
 
 ## [0.3.2] - 2026-06-30
 
@@ -170,7 +187,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/turhancan97/FeatLens/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/turhancan97/FeatLens/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/turhancan97/FeatLens/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/turhancan97/FeatLens/compare/v0.2.6...v0.3.0
