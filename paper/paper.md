@@ -9,7 +9,7 @@ tags:
   - self-supervised learning
   - interpretability
 authors:
-  - name: Turhan Can Kargın
+  - name: Turhan Can Kargin
     orcid: 0000-0002-6751-4773
     corresponding: true
     affiliation: 1
