@@ -49,7 +49,7 @@ image folders, and renders feature maps over video, including temporal models su
 V-JEPA 2 [@assran2025vjepa2]. FeatLens is available on PyPI, documented online, and has a
 browser demo.
 
-![Feature maps of DINO ViT-S/8 [@caron2021dino] at layers 2, 5, 8 and 11, colored by robust PCA with one basis shared across layers so that colors are comparable along the row.\label{fig:layers}](feat_peacock.png)
+![The input image (left, resized to the model's square input) and its feature maps from DINO ViT-S/8 [@caron2021dino] at layers 2, 5, 8 and 11, colored by robust PCA with one basis shared across layers so that colors are comparable along the row.\label{fig:layers}](feat_peacock.png)
 
 # Statement of need
 
@@ -73,7 +73,7 @@ encode?" into a one-line call, and it gives comparable outputs, with a shared co
 same preprocessing, so that side-by-side figures, such as the backbone comparison in
 \autoref{fig:compare}, reflect the models rather than the plotting code.
 
-![Last-layer PCA feature maps of six ViT-B/16 backbones on the same image at 1024 px. Architecture and patch size are fixed, so differences come from the training objective: DINO [@caron2021dino], DINOv3 [@simeoni2025dinov3], MAE [@he2022mae], SigLIP 2 [@tschannen2025siglip2], a supervised ViT [@dosovitskiy2021vit], and Perception Encoder [@bolya2025pe].\label{fig:compare}](compare_b16_market.png){ width=80% }
+![The input image (left, resized to the model's square input) and the last-layer PCA feature maps of six ViT-B/16 backbones on it at 1024 px. Architecture and patch size are fixed, so differences come from the training objective: DINO [@caron2021dino], DINOv3 [@simeoni2025dinov3], MAE [@he2022mae], SigLIP 2 [@tschannen2025siglip2], a supervised ViT [@dosovitskiy2021vit], and Perception Encoder [@bolya2025pe].\label{fig:compare}](compare_b16_market.png)
 
 # State of the field
 
