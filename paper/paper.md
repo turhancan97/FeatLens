@@ -27,8 +27,10 @@ bibliography: paper.bib
 
 # Summary
 
-Modern vision models, such as self-supervised Vision Transformers (ViTs), image–text models and
-video encoders, produce a dense grid of high-dimensional feature vectors, one per image patch,
+Modern vision models, such as self-supervised Vision Transformers (ViTs)
+[@dosovitskiy2021vit; @caron2021dino; @oquab2024dinov2], image–text models
+[@radford2021clip; @tschannen2025siglip2] and video encoders [@assran2025vjepa2], produce a
+dense grid of high-dimensional feature vectors, one per image patch,
 at every layer. These features drive downstream tasks like segmentation, correspondence and
 retrieval, yet they are hard to inspect: a single layer of a base-sized ViT holds 196 vectors of
 768 numbers each for a 224×224 image. A common way to look at them is to project each patch onto
