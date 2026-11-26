@@ -6,6 +6,12 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+- An input/output example in the `visualize` docstring, shown in the API reference
+  ([#33](https://github.com/turhancan97/FeatLens/pull/33), thanks
+  [@Kreyanxh](https://github.com/Kreyanxh); part of
+  [#29](https://github.com/turhancan97/FeatLens/issues/29)).
+
 ### Changed
 - Packaging uses an SPDX license expression (`license = "MIT"`, `license-files`) and requires
   `setuptools>=77`, removing the license deprecation warnings from the build
