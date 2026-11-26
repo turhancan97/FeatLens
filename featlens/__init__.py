@@ -47,7 +47,23 @@ def grid(models, images, layers=None, out=None, **kwargs):
 
 
 def visualize(model, images, layers=None, out=None, **kwargs):
-    """One model across layers — uses a shared PCA basis so colors are comparable across the row."""
+    """Render one model's feature maps across layers with a shared PCA basis.
+
+    Examples:
+        >>> import featlens as fl
+        >>> data = fl.visualize(
+        ...     "dinov2_vitb14",
+        ...     "examples/images/cat.jpg",
+        ...     layers=[2, 5],
+        ...     return_data=True,
+        ... )
+        >>> data["tiles"].shape
+        (1, 2, 224, 224, 3)
+
+    For one image and two layers, ``tiles`` is a NumPy array shaped
+    ``(1, 2, 224, 224, 3)`` (model, layer, height, width, RGB), with
+    values in ``[0, 1]``.
+    """
     kwargs.setdefault("basis", "shared_per_model")
     ctor_kw, render_kw = _split_kwargs(kwargs)
     return FeatureGrid([model], layers=layers, **ctor_kw).render(images, out_path=out, **render_kw)
