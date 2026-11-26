@@ -16,6 +16,9 @@ a question, please jump in. Thank you for helping make FeatLens better! 🎉
   scope it. Good first contributions include a new entry in the model registry
   (`featlens/registry.py`), a new visualization method (`featlens/methods.py`), or docs improvements.
 
+For questions and support, see [SUPPORT.md](SUPPORT.md). For who maintains the project and how
+decisions are made, see [GOVERNANCE.md](GOVERNANCE.md).
+
 ## Development setup
 
 ```bash
@@ -42,8 +45,8 @@ Install PyTorch for your platform first (https://pytorch.org).
 - **Docs:** for documentation changes, build the site strictly — `mkdocs build --strict`.
 - **New behavior** should come with a test.
 - **A new model** should be verified to **load and forward** to a valid `[B, L, D, h, w]` stack —
-  see `tests/test_smoke.py`, whose `test_depth_for_every_registry_model` already iterates the
-  registry.
+  see `tests/test_smoke.py`, and `test_depth_for_every_registry_model` in `tests/test_demo.py`,
+  which already iterates the registry.
 
 ## Reporting a bug
 

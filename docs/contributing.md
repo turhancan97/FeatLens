@@ -16,6 +16,8 @@ or just a question, please jump in. This page mirrors the repository's
   scope it. Good first contributions include a new entry in the
   [model registry](models.md), a new [visualization method](methods.md), or docs improvements.
 
+For questions and who maintains the project, see [Support & governance](support.md).
+
 ## Development setup
 
 ```bash
@@ -30,7 +32,7 @@ pip install pytest mkdocs-material mkdocstrings[python]
 - Run the test suite: `pytest -q`.
 - For documentation changes, build the site strictly: `mkdocs build --strict`.
 - New behavior should come with a test; a new model should be verified to **load and forward**
-  to a valid `[B, L, D, h, w]` stack (see `tests/test_smoke.py`).
+  to a valid `[B, L, D, h, w]` stack (see `tests/test_smoke.py` and `tests/test_demo.py`).
 - Keep changes focused and match the surrounding style.
 
 ## Releasing (maintainers)

@@ -11,6 +11,9 @@ All notable changes to **FeatLens** are documented here. The format is based on
   BibTeX in the README and docs, with the Zenodo DOI `10.5281/zenodo.21082488` and a DOI badge.
 - A 3-minute narrated **video explainer** (Manim + Kokoro-82M, subtitled), embedded on the docs
   home page and linked from the README. Its source and render pipeline live in `video/`.
+- `SUPPORT.md` (where to get help, what to expect, how to report security issues) and
+  `GOVERNANCE.md` (maintainers, decision-making, releases, becoming a maintainer), plus a
+  *Support & governance* docs page.
 
 ## [0.3.2] - 2026-06-30
 
