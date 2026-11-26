@@ -1,0 +1,45 @@
+name: ✨ Feature request
+description: Suggest a new visualization, option, or workflow.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        FeatLens focuses on inspecting the dense, patch-level features of vision models (see
+        [project scope](https://github.com/turhancan97/FeatLens/blob/main/GOVERNANCE.md#project-scope)).
+        Larger changes are best discussed here before any code is written.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The research question or workflow behind the request.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed feature
+      description: What should FeatLens do? An example call or a sketch of the output helps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workarounds
+      description: What you do today, or other tools you've tried.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you like to implement it?
+      options:
+        - "Yes, I can open a pull request"
+        - "Maybe, with some guidance"
+        - "No"
+    validations:
+      required: true

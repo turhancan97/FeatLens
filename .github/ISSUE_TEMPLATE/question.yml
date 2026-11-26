@@ -1,0 +1,33 @@
+name: ❓ Question
+description: Ask how to do something, or what a feature map means.
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions are welcome! The [docs](https://turhancan97.github.io/FeatLens/) and the
+        3-minute [video explainer](https://turhancan97.github.io/FeatLens/#video-explainer) may
+        already answer it.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What have you tried?
+      description: Code you ran, the model spec, and any output (images welcome).
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: FeatLens version
+      placeholder: "0.3.2"
+    validations:
+      required: false

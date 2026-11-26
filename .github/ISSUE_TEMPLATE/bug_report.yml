@@ -1,0 +1,79 @@
+name: 🐛 Bug report
+description: Something fails, crashes, or produces wrong feature maps.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! A minimal example and the full traceback make bugs much faster to fix.
+        See [SUPPORT.md](https://github.com/turhancan97/FeatLens/blob/main/SUPPORT.md) for what to expect.
+        **Security problems:** please don't file them here; use
+        [private vulnerability reporting](https://github.com/turhancan97/FeatLens/security/advisories/new).
+
+  - type: input
+    id: version
+    attributes:
+      label: FeatLens version
+      description: 'Output of `python -c "import featlens; print(featlens.__version__)"`'
+      placeholder: "0.3.2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Python, PyTorch, and (if used) timm / transformers versions; OS; CPU or GPU.
+      placeholder: |
+        Python 3.11, torch 2.4.0 (CUDA 12.1), timm 1.0.9
+        Ubuntu 22.04, NVIDIA RTX 4090
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Model spec
+      description: The model you passed, e.g. `dinov2_vitb14`, `timm:vit_base_patch16_224`, `hf:facebook/dinov2-base`, or "custom module".
+      placeholder: dinov2_vitb14
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal code to reproduce
+      description: The smallest snippet (or CLI command) that shows the problem.
+      placeholder: |
+        import featlens as ll
+        ll.visualize("dinov2_vitb14", "img.jpg", layers=[2, 5, 8, 11], out="row.png")
+      render: python
+    validations:
+      required: true
+
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Traceback or unexpected output
+      description: The full traceback, or a screenshot / description of the wrong output.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and didn't find this problem.
+          required: true
+        - label: The problem happens with the latest FeatLens release.
+          required: false

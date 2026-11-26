@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 Documentation
+    url: https://turhancan97.github.io/FeatLens/
+    about: Installation, usage, visualization methods, model sources and the API reference.
+  - name: 🤗 Live demo
+    url: https://huggingface.co/spaces/turhancan97/FeatLens-demo
+    about: Try models and methods in the browser, no install.
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/turhancan97/FeatLens/security/advisories/new
+    about: Please report security problems privately, not in a public issue.

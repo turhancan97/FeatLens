@@ -1,0 +1,54 @@
+name: 🧩 Model or source support
+description: A model or model source doesn't load, or you'd like a new one in the registry.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        FeatLens loads models from timm, Hugging Face, `torch.hub`, external repositories and your
+        own modules ([model sources](https://turhancan97.github.io/FeatLens/models/)). Tell us which
+        model you need and where it comes from.
+
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: Name and, ideally, a link to the checkpoint or paper.
+      placeholder: "e.g. RADIO v2.5-B, https://huggingface.co/..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source
+    attributes:
+      label: Where does it come from?
+      options:
+        - timm
+        - Hugging Face transformers
+        - torch.hub
+        - External repository
+        - My own module / CNN
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What did you try?
+      description: The spec or code you used and any error you got. Leave empty if it's a registry request only.
+      render: python
+    validations:
+      required: false
+
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you like to add it yourself?
+      description: New registry entries are a good first contribution; see CONTRIBUTING.md.
+      options:
+        - "Yes, I can open a pull request"
+        - "Maybe, with some guidance"
+        - "No"
+    validations:
+      required: true
