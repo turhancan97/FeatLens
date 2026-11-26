@@ -155,14 +155,16 @@ support guidelines, a code of conduct, and continuous integration.
 
 <!-- TODO: the author must confirm every statement below is accurate before submission. -->
 
-Generative AI was used in developing this software and its supporting materials. The author used
-Claude Code (Anthropic) with the Claude Opus 4.8 and Claude Opus 5.5 models; 58 of the
-repository's 82 commits at the time of writing carry an AI co-author trailer. AI assistance
-covered code generation and refactoring, test scaffolding, documentation and examples, the
-video explainer, and drafting and copy-editing this manuscript. The author framed the problem,
-made the core design decisions, including the adapter/visualization split, the
-`[B, L, D, h, w]` contract, and the choice of robust and shared PCA bases, and reviewed, edited
-and validated all AI-assisted code, documentation and text.
+The author used Claude Code (Anthropic), with the Claude Opus 4.8 and Claude Opus 5.5 models, as
+an assistant for:
+
+- **Software:** writing and refactoring code, and writing tests.
+- **Documentation:** the docs, examples and the video explainer.
+- **This paper:** drafting and copy-editing.
+
+The author defined the problem and made the core design decisions, such as separating model
+access from visualization and the robust, shared PCA color bases. The author reviewed, edited and
+validated all AI-assisted code, documentation and text.
 
 # Acknowledgements
 
