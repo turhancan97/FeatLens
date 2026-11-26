@@ -153,8 +153,6 @@ support guidelines, a code of conduct, and continuous integration.
 
 # AI usage disclosure
 
-<!-- TODO: the author must confirm every statement below is accurate before submission. -->
-
 The author used Claude Code (Anthropic), with the Claude Opus 4.8 and Claude Opus 5.5 models, as
 an assistant for:
 
