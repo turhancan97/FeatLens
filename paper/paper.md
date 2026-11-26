@@ -11,7 +11,6 @@ tags:
 authors:
   - name: Turhan Can Kargin
     orcid: 0000-0002-6751-4773
-    corresponding: true
     affiliation: 1
 affiliations:
   - name: Independent Researcher
