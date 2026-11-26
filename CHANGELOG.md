@@ -6,6 +6,13 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+- Packaging uses an SPDX license expression (`license = "MIT"`, `license-files`) and requires
+  `setuptools>=77`, removing the license deprecation warnings from the build
+  ([#31](https://github.com/turhancan97/FeatLens/pull/31), thanks
+  [@bitzin-dev](https://github.com/bitzin-dev); closes
+  [#19](https://github.com/turhancan97/FeatLens/issues/19)).
+
 ## [0.3.3] - 2026-11-26
 
 ### Added
