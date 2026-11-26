@@ -31,9 +31,10 @@ Modern vision models, such as self-supervised Vision Transformers (ViTs)
 [@dosovitskiy2021vit; @caron2021dino; @oquab2024dinov2], image–text models
 [@radford2021clip; @tschannen2025siglip2] and video encoders [@assran2025vjepa2], produce a
 dense grid of high-dimensional feature vectors, one per image patch,
-at every layer. These features drive downstream tasks like segmentation, correspondence and
-retrieval, yet they are hard to inspect: a single layer of a base-sized ViT holds 196 vectors of
-768 numbers each for a 224×224 image. A common way to look at them is to project each patch onto
+at every layer. These features drive downstream tasks like segmentation [@hamilton2022stego],
+correspondence [@amir2021deepvit] and retrieval [@oquab2024dinov2], yet they are hard to
+inspect: a single layer of a base-sized ViT [@dosovitskiy2021vit] holds 196 vectors of 768
+numbers each for a 224×224 image. A common way to look at them is to project each patch onto
 the top three principal components and display the result as an RGB image [@oquab2024dinov2],
 so that patches the model treats as similar share a color.
 
