@@ -26,7 +26,10 @@ from PIL import Image
 import featlens as ll
 from featlens.registry import BACKBONE_REGISTRY
 
-MODELS = list(BACKBONE_REGISTRY.keys())
+# Registry models kept out of the demo: added for research use (SpaRRTa backbones) rather than
+# for the free CPU Space, where an extra large download per model slows everyone down.
+DEMO_EXCLUDE = {"dinov2_reg_vits14", "dinov2_reg_vitb14", "dinov2_reg_vitl14", "clip_base_laion"}
+MODELS = [m for m in BACKBONE_REGISTRY if m not in DEMO_EXCLUDE]
 # Default to a small ViT-S backbone so the very first render is a quick download.
 _PREFERRED = ["dinov2_vits14", "dino_vits16", "dinov3_vits16"]
 DEFAULT_MODEL = next((m for m in _PREFERRED if m in MODELS), MODELS[0])

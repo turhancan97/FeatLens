@@ -19,11 +19,12 @@ APP_PATH = Path(__file__).resolve().parents[1] / "demo" / "app.py"
 EXPECTED_DEPTH = {
     "dinov3_vitl16": 24, "dinov3_vitb16": 12, "dinov3_vits16": 12,
     "dinov2_vitl14": 24, "dinov2_vitb14": 12, "dinov2_vits14": 12,
+    "dinov2_reg_vitl14": 24, "dinov2_reg_vitb14": 12, "dinov2_reg_vits14": 12,
     "dino_vitb16": 12, "dino_vits16": 12,
     "mae_vitl16": 24, "mae_vitb16": 12,
     "supervised_vitl16": 24, "supervised_vitb16": 12,
     "deit3_small": 12, "deit3_base": 12, "deit3_large": 24,
-    "clip_large_openai": 24, "clip_large_laion": 24,
+    "clip_large_openai": 24, "clip_large_laion": 24, "clip_base_laion": 12,
     "siglip_vitl16": 24, "siglip_vitb16": 12,
     "perception_encoder_vitl14": 24, "perception_encoder_vitb16": 12,
     "perception_encoder_vits16": 12,
@@ -55,6 +56,14 @@ def test_depth_for_every_registry_model(app):
     for name in BACKBONE_REGISTRY:
         assert name in EXPECTED_DEPTH, f"new model {name!r}: add it to EXPECTED_DEPTH"
         assert app._depth_for(name) == EXPECTED_DEPTH[name], name
+
+
+def test_research_only_models_stay_out_of_demo(app):
+    from featlens.registry import BACKBONE_REGISTRY
+
+    for name in app.DEMO_EXCLUDE:
+        assert name in BACKBONE_REGISTRY, f"{name!r} is excluded from the demo but not registered"
+        assert name not in app.MODELS
 
 
 def test_clamp_layer_stays_in_range(app):
