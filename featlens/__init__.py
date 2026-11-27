@@ -27,7 +27,7 @@ from .batch import batch
 from .video import video
 from .attention import attention
 
-__version__ = "0.3.3"
+__version__ = "0.4.0"
 __all__ = ["FeatureExtractor", "FeatureGrid", "grid", "visualize", "compare", "correspond",
            "batch", "video", "attention"]
 

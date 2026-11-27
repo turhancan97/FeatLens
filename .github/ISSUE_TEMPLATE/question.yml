@@ -28,6 +28,6 @@ body:
     id: version
     attributes:
       label: FeatLens version
-      placeholder: "0.3.3"
+      placeholder: "0.4.0"
     validations:
       required: false

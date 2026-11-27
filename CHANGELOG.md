@@ -6,6 +6,8 @@ All notable changes to **FeatLens** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-27
+
 ### Added
 - **All 13 backbones of the [SpaRRTa](https://github.com/gmum/SpaRRTa) benchmark** can now be loaded
   ([#23](https://github.com/turhancan97/FeatLens/issues/23)):
@@ -21,6 +23,7 @@ All notable changes to **FeatLens** are documented here. The format is based on
   ([#33](https://github.com/turhancan97/FeatLens/pull/33), thanks
   [@Kreyanxh](https://github.com/Kreyanxh); part of
   [#29](https://github.com/turhancan97/FeatLens/issues/29)).
+- `.github/CODEOWNERS`, so every pull request requests a review from the maintainer.
 
 ### Changed
 - **Python 3.10 or newer is now required** (`requires-python = ">=3.10"`, previously `>=3.8`).
@@ -220,7 +223,8 @@ stack, an opt-in feature cache, and a hosted demo.
 - Public API (`grid` / `visualize` / `compare`), a `featlens` CLI, a friendly model registry,
   and MkDocs documentation.
 
-[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/turhancan97/FeatLens/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/turhancan97/FeatLens/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/turhancan97/FeatLens/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/turhancan97/FeatLens/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/turhancan97/FeatLens/compare/v0.3.0...v0.3.1

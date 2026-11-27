@@ -15,7 +15,7 @@ body:
     attributes:
       label: FeatLens version
       description: 'Output of `python -c "import featlens; print(featlens.__version__)"`'
-      placeholder: "0.3.3"
+      placeholder: "0.4.0"
     validations:
       required: true
 
