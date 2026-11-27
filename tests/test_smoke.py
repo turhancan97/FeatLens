@@ -67,9 +67,20 @@ import pytest
     ("eva02_small_patch14", 224),   # EVA-02 architecture
     ("samvit_base", 224),           # SAM ViT-det
     ("beit_base_patch16", 224),     # BEiT
+    ("dinov2_reg_vits14", 224),     # DINOv2 with registers
+    ("dinov2_reg_vitb14", 224),
+    ("clip_base_laion", 224),       # CLIP ViT-B/16
 ])
 def test_new_registry_models_load_and_forward(name, size):
     # New v0.3 registry entries resolve through the timm ViT hook path (random weights, no download).
     ex = FeatureExtractor(name, layers=[-1], img_size=size, pretrained=False)
     out = ex(torch.randn(1, 3, size, size))
     assert out.dim() == 5 and out.shape[0] == 1  # [B, L, D, h, w]
+
+
+def test_register_tokens_are_stripped():
+    # DINOv2-with-registers emits CLS + 4 register tokens before the 16 x 16 patch tokens at 224 px
+    # (patch 14); only the patch grid must remain.
+    ex = FeatureExtractor("dinov2_reg_vits14", layers=[0, -1], img_size=224, pretrained=False)
+    out = ex(torch.randn(2, 3, 224, 224))
+    assert out.shape == (2, 2, 384, 16, 16)  # [B, L, D, h, w]

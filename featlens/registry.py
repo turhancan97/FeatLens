@@ -23,6 +23,10 @@ BACKBONE_REGISTRY = {
     "dinov2_vitl14": "vit_large_patch14_dinov2.lvd142m",
     "dinov2_vitb14": "vit_base_patch14_dinov2.lvd142m",
     "dinov2_vits14": "vit_small_patch14_dinov2.lvd142m",
+    # DINOv2 with 4 register tokens (Darcet et al., 2024); the registers are stripped like CLS.
+    "dinov2_reg_vitl14": "vit_large_patch14_reg4_dinov2.lvd142m",
+    "dinov2_reg_vitb14": "vit_base_patch14_reg4_dinov2.lvd142m",
+    "dinov2_reg_vits14": "vit_small_patch14_reg4_dinov2.lvd142m",
     "dino_vitb16": "vit_base_patch16_224.dino",
     "dino_vits16": "vit_small_patch16_224.dino",
     "mae_vitl16": "vit_large_patch16_224.mae",
@@ -34,6 +38,7 @@ BACKBONE_REGISTRY = {
     "deit3_large": "deit3_large_patch16_224.fb_in1k",
     "clip_large_openai": "vit_large_patch14_clip_224.openai",
     "clip_large_laion": "vit_large_patch14_clip_224.laion400m_e32",
+    "clip_base_laion": "vit_base_patch16_clip_224.laion2b",
     "siglip_vitl16": "vit_large_patch16_siglip_256.v2_webli",
     "siglip_vitb16": "vit_base_patch16_siglip_256.v2_webli",
     "perception_encoder_vitl14": "vit_pe_spatial_large_patch14_448.fb",

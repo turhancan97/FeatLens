@@ -7,6 +7,16 @@ All notable changes to **FeatLens** are documented here. The format is based on
 ## [Unreleased]
 
 ### Added
+- **All 13 backbones of the [SpaRRTa](https://github.com/gmum/SpaRRTa) benchmark** can now be loaded
+  ([#23](https://github.com/turhancan97/FeatLens/issues/23)):
+  - registry entries `dinov2_reg_vits14`, `dinov2_reg_vitb14`, `dinov2_reg_vitl14` (DINOv2 with
+    registers) and `clip_base_laion` (CLIP ViT-B/16, LAION-2B); kept out of the live demo;
+  - loaders in `examples/backbones/` for VGGT, SPA, CroCo, CroCo v2 and MaskFeat, built on the
+    existing adapters, so FeatLens gains no new dependencies (SPA and MaskFeat load into a timm
+    ViT-B/16 with a strict key check; MaskFeat needs no OpenMMLab install);
+  - `examples/sparrta_gallery.py`: the 13 backbones on SpaRRTa's Bridge and City scenes, with the two
+    scenes in `examples/images/`;
+  - a "Backbones from the SpaRRTa benchmark" section in the model-sources docs.
 - An input/output example in the `visualize` docstring, shown in the API reference
   ([#33](https://github.com/turhancan97/FeatLens/pull/33), thanks
   [@Kreyanxh](https://github.com/Kreyanxh); part of
