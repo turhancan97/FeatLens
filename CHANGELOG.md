@@ -18,6 +18,11 @@ All notable changes to **FeatLens** are documented here. The format is based on
   ([#31](https://github.com/turhancan97/FeatLens/pull/31), thanks
   [@bitzin-dev](https://github.com/bitzin-dev); closes
   [#19](https://github.com/turhancan97/FeatLens/issues/19)).
+- The six-backbone comparison in the README and docs now describes DINO accurately: only DINOv3
+  carves the scene into smooth regions, while DINO keeps some coherent regions with more
+  fine-grained variation ([#35](https://github.com/turhancan97/FeatLens/pull/35), thanks
+  [@kalidatuna](https://github.com/kalidatuna); closes
+  [#18](https://github.com/turhancan97/FeatLens/issues/18)).
 
 ## [0.3.3] - 2026-11-26
 
