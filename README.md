@@ -71,6 +71,13 @@ the *training objective*: DINOv3 carves the scene into smooth semantic regions, 
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_b16_market.png" alt="six ViT-B/16 backbones compared on one image" width="100%"></p>
 
+**The 13 backbones of the [SpaRRTa](https://github.com/gmum/SpaRRTa) benchmark** (IJCV 2026) on its
+Bridge scene, last layer at 224 px, one PCA basis per backbone fitted on the Bridge and City scenes
+together. 8 load by name and 5 (VGGT, SPA, CroCo, CroCo v2, MaskFeat) through the loaders in
+[`examples/backbones/`](examples/backbones/) — `python examples/sparrta_gallery.py`:
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/sparrta_gallery_bridge.png" alt="13 SpaRRTa backbones on the Bridge scene" width="100%"></p>
+
 **Beyond PCA** — the same DINOv2 row on `cat_hires.jpg` at 448px, recolored by **cosine-similarity** to a seed patch,
 **k-means** segmentation, a **foreground** mask, and **saliency** (activation magnitude) — across
 layers 2 / 5 / 8 / 11:
@@ -198,11 +205,14 @@ model input.)
 | **timm** | friendly name (`dinov2_vitb14`) or raw id (`vit_base_patch16_224`) | `[timm]` |
 | **HuggingFace** | `hf:facebook/dinov2-base` | `[hf]` |
 | **torch.hub (V-JEPA)** | `vjepa2_vitl16` | network for weights |
-| **External repo** (VGGT/SPA/…) | `external_adapter.load(repo_dir, builder, hook_target=…)` | the cloned repo |
+| **External repo** (VGGT/CroCo/…) | `external_adapter.load(repo_dir, builder, hook_target=…)` | the cloned repo |
 | **Your own model** | `custom_adapter.load(model, feature_fn=…)` | — |
 
-Friendly names (see `featlens/registry.py`) cover DINO, DINOv2/v3, CLIP, SigLIP, MAE, DeiT,
-EVA-02, BEiT, SAM, Perception Encoder and V-JEPA; any other timm id works directly.
+Friendly names (see `featlens/registry.py`) cover DINO, DINOv2/v3 (including DINOv2 with registers),
+CLIP, SigLIP, MAE, DeiT, EVA-02, BEiT, SAM, Perception Encoder and V-JEPA; any other timm id works
+directly. All 13 backbones of the [SpaRRTa](https://github.com/gmum/SpaRRTa) benchmark load either by
+name or through the small loaders in [`examples/backbones/`](examples/backbones/) (VGGT, SPA, CroCo,
+CroCo v2, MaskFeat); see [Model sources](https://turhancan97.github.io/FeatLens/models/#backbones-from-the-sparrta-benchmark).
 
 ## <img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/assets/icon-48.png" height="22" alt=""> Layers
 

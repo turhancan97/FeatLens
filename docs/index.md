@@ -76,6 +76,19 @@ grid), PCA→RGB per model. Architecture and patch size are fixed, so the differ
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_b16_market.png" alt="six ViT-B/16 backbones compared on one image" width="100%"></p>
 
+### The 13 SpaRRTa backbones
+
+The 13 frozen backbones evaluated by the [SpaRRTa](https://github.com/gmum/SpaRRTa) benchmark
+(Kargin et al., IJCV 2026), on two of its scenes: last layer at 224 px, with one PCA basis per
+backbone fitted on both scenes together, so a model's colors carry over between them. 8 load by name
+and 5 through the loaders in [`examples/backbones/`](models.md#backbones-from-the-sparrta-benchmark);
+the figures come from `python examples/sparrta_gallery.py`. (The
+[SpaRRTa blog post](https://sparrta.gmum.net/blog/one-sparrta-scene-through-the-eyes-of-13-vision-models/) shows the same backbones read with
+SpaRRTa's own extraction, so its maps differ in places.)
+
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/sparrta_gallery_bridge.png" alt="13 SpaRRTa backbones on the Bridge scene" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/sparrta_gallery_city.png" alt="13 SpaRRTa backbones on the City scene" width="100%"></p>
+
 **`attention(...)` — attention-rollout for a timm ViT** (DINO ViT-B/16, overlaid) &nbsp;|&nbsp;
 **`video(...)` — per-frame feature maps as a filmstrip:**
 
