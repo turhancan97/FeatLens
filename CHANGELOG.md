@@ -13,6 +13,11 @@ All notable changes to **FeatLens** are documented here. The format is based on
   [#29](https://github.com/turhancan97/FeatLens/issues/29)).
 
 ### Changed
+- **Python 3.10 or newer is now required** (`requires-python = ">=3.10"`, previously `>=3.8`).
+  Python 3.8 and 3.9 are end-of-life, recent PyTorch releases need 3.10+, and the old claim was
+  never tested. CI now runs the test suite on Python 3.10–3.14 on Linux and on Python 3.12 on
+  macOS and Windows ([#36](https://github.com/turhancan97/FeatLens/pull/36); closes
+  [#20](https://github.com/turhancan97/FeatLens/issues/20)).
 - Packaging uses an SPDX license expression (`license = "MIT"`, `license-files`) and requires
   `setuptools>=77`, removing the license deprecation warnings from the build
   ([#31](https://github.com/turhancan97/FeatLens/pull/31), thanks
