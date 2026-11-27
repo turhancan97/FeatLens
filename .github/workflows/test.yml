@@ -7,13 +7,29 @@ on:
 
 jobs:
   test:
-    name: Smoke tests (CPU)
-    runs-on: ubuntu-latest
+    name: Smoke tests (CPU, ${{ matrix.os }}, Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Run every combination even if one fails, so a run shows the full compatibility picture.
+      fail-fast: false
+      matrix:
+        # Every supported Python version on Linux...
+        os: [ubuntu-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        # ...plus one version on macOS and Windows to catch OS-specific problems (paths, I/O).
+        include:
+          - os: macos-latest
+            python-version: "3.12"
+          - os: windows-latest
+            python-version: "3.12"
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: Install (CPU-only PyTorch + timm)
@@ -21,5 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install -e ".[timm]" pytest
+      - name: Show versions
+        run: python -c "import sys, torch, numpy, timm; print(sys.version); print('torch', torch.__version__, '| numpy', numpy.__version__, '| timm', timm.__version__)"
       - name: Run smoke tests
         run: pytest tests/ -q
