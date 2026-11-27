@@ -67,7 +67,7 @@ and the compare / method figures further down use DINO ViT-B/16 at 448px for a d
 
 **Same scene, six ViT-B/16 backbones** — `market.jpg` at 1024px, **last-layer** features (a 64×64
 grid), PCA→RGB per model. Architecture and patch size are held fixed, so the differences are purely
-the *training objective*: DINOv3 and DINO carve the scene into smooth semantic regions, MAE's map is broad vertical color bands that follow horizontal position rather than the scene (its strongest components seem to encode *where* a patch is, not *what* it shows), while SigLIP, supervised, and Perception Encoder encode much higher-frequency detail.
+the *training objective*: DINOv3 carves the scene into smooth semantic regions, while DINO retains some coherent regions but shows more fine-grained variation. MAE's map is broad vertical color bands that follow horizontal position rather than the scene (its strongest components seem to encode *where* a patch is, not *what* it shows), while SigLIP, supervised, and Perception Encoder encode much higher-frequency detail.
 
 <p align="center"><img src="https://raw.githubusercontent.com/turhancan97/FeatLens/main/examples/compare_b16_market.png" alt="six ViT-B/16 backbones compared on one image" width="100%"></p>
 
